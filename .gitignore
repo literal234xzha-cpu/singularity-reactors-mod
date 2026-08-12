@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+*.log
+*.asm
+.DS_Store
+# Tool binaries
+*.jar
+# APK files
+*.apk
+# Native libraries
+*.so
+*.dat
+# Large output directories
+decompiler/apks/
+decompiler/output/
+decompiler/tools/

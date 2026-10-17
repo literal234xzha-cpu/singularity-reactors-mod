@@ -83,8 +83,8 @@ public class SingularityBlocks {
             
             // Consumo de items MÚLTIPLES
             consumeItems(with(
-                Items.plastanium, 8,
-                Items.thorium, 6
+                Items.plastanium, 1,
+                Items.thorium, 1
             ));
             
             itemDuration = 60f;
@@ -121,8 +121,8 @@ public class SingularityBlocks {
             consumeLiquid(Liquids.cryofluid, 2.5f / 60f);
             
             consumeItems(with(
-                Items.plastanium, 12,
-                Items.thorium, 10
+                Items.plastanium, 1,
+                Items.thorium, 1
             ));
             
             itemDuration = 60f;
@@ -161,8 +161,8 @@ public class SingularityBlocks {
             consumeLiquid(Liquids.slag, 2f / 60f);
             
             consumeItems(with(
-                Items.plastanium, 20,
-                Items.thorium, 18
+                Items.plastanium, 1,
+                Items.thorium, 1
             ));
             
             itemDuration = 60f;
@@ -202,8 +202,8 @@ public class SingularityBlocks {
             consumeLiquid(Liquids.oil, 3f / 60f);
             
             consumeItems(with(
-                Items.plastanium, 35,
-                Items.thorium, 30
+                Items.plastanium, 1,
+                Items.thorium, 1
             ));
             
             itemDuration = 60f;

@@ -79,10 +79,8 @@ public class SingularityBlocks {
             warmupSpeed = 0.002f;
             
             // Consumo de líquidos (crítico)
-            consumeLiquids(LiquidStack.with(
-                Liquids.water, 2.5f,
-                Liquids.cryofluid, 1.5f
-            ));
+            consumeLiquid(Liquids.water, 2.5f / 60f);
+            consumeLiquid(Liquids.cryofluid, 1.5f / 60f);
             
             // Consumo de items
             consumeItems(with(
@@ -116,10 +114,8 @@ public class SingularityBlocks {
             itemDuration = 60f;
             warmupSpeed = 0.0015f;
             
-            consumeLiquids(LiquidStack.with(
-                Liquids.water, 4f,
-                Liquids.cryofluid, 2.5f
-            ));
+            consumeLiquid(Liquids.water, 4f / 60f);
+            consumeLiquid(Liquids.cryofluid, 2.5f / 60f);
             
             consumeItems(with(
                 Items.plastanium, 12,
@@ -153,11 +149,9 @@ public class SingularityBlocks {
             warmupSpeed = 0.001f;
             
             // MUY COMILÓN
-            consumeLiquids(LiquidStack.with(
-                Liquids.water, 8f,
-                Liquids.cryofluid, 5f,
-                Liquids.slag, 2f
-            ));
+            consumeLiquid(Liquids.water, 8f / 60f);
+            consumeLiquid(Liquids.cryofluid, 5f / 60f);
+            consumeLiquid(Liquids.slag, 2f / 60f);
             
             consumeItems(with(
                 Items.plastanium, 20,
@@ -191,12 +185,10 @@ public class SingularityBlocks {
             warmupSpeed = 0.0008f;
             
             // BRUTALMENTE COMILÓN
-            consumeLiquids(LiquidStack.with(
-                Liquids.water, 15f,
-                Liquids.cryofluid, 10f,
-                Liquids.slag, 5f,
-                Liquids.oil, 3f
-            ));
+            consumeLiquid(Liquids.water, 15f / 60f);
+            consumeLiquid(Liquids.cryofluid, 10f / 60f);
+            consumeLiquid(Liquids.slag, 5f / 60f);
+            consumeLiquid(Liquids.oil, 3f / 60f);
             
             consumeItems(with(
                 Items.plastanium, 35,

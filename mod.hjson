@@ -14,7 +14,7 @@ main: "singularity.SingularityMod"
 description: "Agrega 4 reactores de singularidad extremadamente potentes y 3 nodos de energía mejorados. Los reactores generan cantidades masivas de energía pero requieren recursos constantes y explotan catastróficamente si fallan."
 
 #the mod version
-version: 1.0.2
+version: 1.0.3
 
 #the minimum game build required to run this mod
 minGameVersion: 160.3

@@ -82,11 +82,8 @@ public class SingularityBlocks {
             consumeLiquid(Liquids.water, 2.5f / 60f);
             consumeLiquid(Liquids.cryofluid, 1.5f / 60f);
             
-            // Consumo de items
-            consumeItems(with(
-                Items.plastanium, 8,
-                Items.thorium, 6
-            ));
+            // Consumo de items (solo plastanium, ImpactReactor solo soporta 1 item)
+            consumeItem(Items.plastanium, 8);
             
             // Explosión moderada
             explosionRadius = 35;
@@ -117,10 +114,7 @@ public class SingularityBlocks {
             consumeLiquid(Liquids.water, 4f / 60f);
             consumeLiquid(Liquids.cryofluid, 2.5f / 60f);
             
-            consumeItems(with(
-                Items.plastanium, 12,
-                Items.thorium, 10
-            ));
+            consumeItem(Items.plastanium, 12);
             
             // Explosión grande
             explosionRadius = 50;
@@ -153,10 +147,7 @@ public class SingularityBlocks {
             consumeLiquid(Liquids.cryofluid, 5f / 60f);
             consumeLiquid(Liquids.slag, 2f / 60f);
             
-            consumeItems(with(
-                Items.plastanium, 20,
-                Items.thorium, 18
-            ));
+            consumeItem(Items.plastanium, 20);
             
             // Explosión muy grande
             explosionRadius = 70;
@@ -190,10 +181,7 @@ public class SingularityBlocks {
             consumeLiquid(Liquids.slag, 5f / 60f);
             consumeLiquid(Liquids.oil, 3f / 60f);
             
-            consumeItems(with(
-                Items.plastanium, 35,
-                Items.thorium, 30
-            ));
+            consumeItem(Items.plastanium, 35);
             
             // EXPLOSIÓN MASIVA - "arrasa con casi todo"
             explosionRadius = 120;

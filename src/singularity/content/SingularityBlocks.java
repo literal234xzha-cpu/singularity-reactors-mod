@@ -7,6 +7,7 @@ import mindustry.type.*;
 import mindustry.world.*;
 import mindustry.world.blocks.power.*;
 import mindustry.world.meta.*;
+import mindustry.world.draw.*;
 
 import static mindustry.type.ItemStack.*;
 
@@ -62,7 +63,7 @@ public class SingularityBlocks {
         // ============= REACTORES DE SINGULARIDAD =============
         
         // Reactor 1: Hiper-Impacto (Más estable, menor producción)
-        singularityReactorHyper = new ImpactReactor("singularity-reactor-hyper") {{
+        singularityReactorHyper = new ConsumeGenerator("singularity-reactor-hyper") {{
             requirements(Category.power, with(
                 Items.plastanium, 800,
                 Items.thorium, 600,
@@ -75,26 +76,33 @@ public class SingularityBlocks {
             
             // Producción: 50k/s neto (833 por tick)
             powerProduction = 833.33f;
-            itemDuration = 60f;
-            warmupSpeed = 0.002f;
             
             // Consumo de líquidos (crítico)
             consumeLiquid(Liquids.water, 2.5f / 60f);
             consumeLiquid(Liquids.cryofluid, 1.5f / 60f);
             
-            // Consumo de items (solo plastanium, ImpactReactor solo soporta 1 item)
-            consumeItem(Items.plastanium, 8);
+            // Consumo de items MÚLTIPLES
+            consumeItems(with(
+                Items.plastanium, 8,
+                Items.thorium, 6
+            ));
             
-            // Explosión moderada
-            explosionRadius = 35;
-            explosionDamage = 8000;
+            itemDuration = 60f;
+            
+            drawer = new DrawMulti(
+                new DrawDefault(),
+                new DrawGlowRegion(){{
+                    alpha = 0.8f;
+                    glowScale = 6f;
+                }}
+            );
             
             ambientSound = Sounds.loopPulse;
             ambientSoundVolume = 0.07f;
         }};
         
         // Reactor 2: Impacto Singularidad (Balanceado)
-        singularityReactorImpact = new ImpactReactor("singularity-reactor-impact") {{
+        singularityReactorImpact = new ConsumeGenerator("singularity-reactor-impact") {{
             requirements(Category.power, with(
                 Items.plastanium, 1200,
                 Items.thorium, 900,
@@ -108,24 +116,31 @@ public class SingularityBlocks {
             
             // Producción: 80k/s neto (1333 por tick)
             powerProduction = 1333.33f;
-            itemDuration = 60f;
-            warmupSpeed = 0.0015f;
             
             consumeLiquid(Liquids.water, 4f / 60f);
             consumeLiquid(Liquids.cryofluid, 2.5f / 60f);
             
-            consumeItem(Items.plastanium, 12);
+            consumeItems(with(
+                Items.plastanium, 12,
+                Items.thorium, 10
+            ));
             
-            // Explosión grande
-            explosionRadius = 50;
-            explosionDamage = 15000;
+            itemDuration = 60f;
+            
+            drawer = new DrawMulti(
+                new DrawDefault(),
+                new DrawGlowRegion(){{
+                    alpha = 0.9f;
+                    glowScale = 7f;
+                }}
+            );
             
             ambientSound = Sounds.loopPulse;
             ambientSoundVolume = 0.09f;
         }};
         
         // Reactor 3: Neodimio (Alta eficiencia, muy comilón)
-        singularityReactorNeodymium = new ImpactReactor("singularity-reactor-neodymium") {{
+        singularityReactorNeodymium = new ConsumeGenerator("singularity-reactor-neodymium") {{
             requirements(Category.power, with(
                 Items.plastanium, 1800,
                 Items.thorium, 1400,
@@ -139,26 +154,33 @@ public class SingularityBlocks {
             
             // Producción: 150k/s neto (2500 por tick)
             powerProduction = 2500f;
-            itemDuration = 60f;
-            warmupSpeed = 0.001f;
             
             // MUY COMILÓN
             consumeLiquid(Liquids.water, 8f / 60f);
             consumeLiquid(Liquids.cryofluid, 5f / 60f);
             consumeLiquid(Liquids.slag, 2f / 60f);
             
-            consumeItem(Items.plastanium, 20);
+            consumeItems(with(
+                Items.plastanium, 20,
+                Items.thorium, 18
+            ));
             
-            // Explosión muy grande
-            explosionRadius = 70;
-            explosionDamage = 25000;
+            itemDuration = 60f;
+            
+            drawer = new DrawMulti(
+                new DrawDefault(),
+                new DrawGlowRegion(){{
+                    alpha = 1f;
+                    glowScale = 8f;
+                }}
+            );
             
             ambientSound = Sounds.loopThoriumReactor;
             ambientSoundVolume = 0.12f;
         }};
         
         // Reactor 4: Impactador (El más peligroso y potente)
-        singularityReactorImpactor = new ImpactReactor("singularity-reactor-impactor") {{
+        singularityReactorImpactor = new ConsumeGenerator("singularity-reactor-impactor") {{
             requirements(Category.power, with(
                 Items.plastanium, 3000,
                 Items.thorium, 2500,
@@ -172,8 +194,6 @@ public class SingularityBlocks {
             
             // Producción: 250k/s neto (4166 por tick)
             powerProduction = 4166.67f;
-            itemDuration = 60f;
-            warmupSpeed = 0.0008f;
             
             // BRUTALMENTE COMILÓN
             consumeLiquid(Liquids.water, 15f / 60f);
@@ -181,11 +201,20 @@ public class SingularityBlocks {
             consumeLiquid(Liquids.slag, 5f / 60f);
             consumeLiquid(Liquids.oil, 3f / 60f);
             
-            consumeItem(Items.plastanium, 35);
+            consumeItems(with(
+                Items.plastanium, 35,
+                Items.thorium, 30
+            ));
             
-            // EXPLOSIÓN MASIVA - "arrasa con casi todo"
-            explosionRadius = 120;
-            explosionDamage = 50000;
+            itemDuration = 60f;
+            
+            drawer = new DrawMulti(
+                new DrawDefault(),
+                new DrawGlowRegion(){{
+                    alpha = 1.2f;
+                    glowScale = 10f;
+                }}
+            );
             
             ambientSound = Sounds.loopThoriumReactor;
             ambientSoundVolume = 0.15f;

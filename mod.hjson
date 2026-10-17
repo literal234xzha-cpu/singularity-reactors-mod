@@ -1,0 +1,23 @@
+#the mod name as displayed in-game
+displayName: "Singularity Reactors"
+
+#the internal name of your mod
+name: "singularity-reactors"
+
+#your name
+author: "LOLOCORD"
+
+#the fully qualified main class of the mod
+main: "singularity.SingularityMod"
+
+#the mod description as seen in the mod dialog
+description: "Agrega 4 reactores de singularidad extremadamente potentes y 3 nodos de energía mejorados. Los reactores generan cantidades masivas de energía pero requieren recursos constantes y explotan catastróficamente si fallan."
+
+#the mod version
+version: 1.0.0
+
+#the minimum game build required to run this mod
+minGameVersion: 160.3
+
+#this is a java mod
+java: true

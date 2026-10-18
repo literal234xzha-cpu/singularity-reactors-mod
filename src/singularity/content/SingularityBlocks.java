@@ -22,7 +22,7 @@ public class SingularityBlocks {
     
     public static void load() {
         
-        // ============= CABLES MEJORADOS =============
+        // ============= NODOS DE ENERGÍA =============
         
         resistivePowerNode = new PowerNode("resistive-power-node") {{
             requirements(Category.power, with(
@@ -62,7 +62,7 @@ public class SingularityBlocks {
         
         // ============= REACTORES DE SINGULARIDAD =============
         
-        // Reactor 1: Hiper-Impacto (Más estable, menor producción)
+        // Reactor Alpha (antes Hiper-Impacto) - 50k/s
         singularityReactorHyper = new ConsumeGenerator("singularity-reactor-hyper") {{
             requirements(Category.power, with(
                 Items.plastanium, 800,
@@ -78,13 +78,13 @@ public class SingularityBlocks {
             powerProduction = 833.33f;
             
             // Consumo de líquidos (crítico)
-            consumeLiquid(Liquids.water, 2.5f / 60f);
-            consumeLiquid(Liquids.cryofluid, 1.5f / 60f);
+            consumeLiquid(Liquids.water, 12f / 60f);  // x5 más
+            consumeLiquid(Liquids.cryofluid, 8f / 60f);  // x5 más
             
             // Consumo de items MÚLTIPLES
             consumeItems(with(
-                Items.plastanium, 1,
-                Items.thorium, 1
+                Items.plastanium, 3,  // x3 más
+                Items.thorium, 2
             ));
             
             itemDuration = 60f;
@@ -101,7 +101,7 @@ public class SingularityBlocks {
             ambientSoundVolume = 0.07f;
         }};
         
-        // Reactor 2: Impacto Singularidad (Balanceado)
+        // Reactor Beta (antes Impacto Singularidad) - 80k/s
         singularityReactorImpact = new ConsumeGenerator("singularity-reactor-impact") {{
             requirements(Category.power, with(
                 Items.plastanium, 1200,
@@ -117,12 +117,12 @@ public class SingularityBlocks {
             // Producción: 80k/s neto (1333 por tick)
             powerProduction = 1333.33f;
             
-            consumeLiquid(Liquids.water, 4f / 60f);
-            consumeLiquid(Liquids.cryofluid, 2.5f / 60f);
+            consumeLiquid(Liquids.water, 20f / 60f);  // x5 más
+            consumeLiquid(Liquids.cryofluid, 12f / 60f);  // x5 más
             
             consumeItems(with(
-                Items.plastanium, 1,
-                Items.thorium, 1
+                Items.plastanium, 4,  // x4 más
+                Items.thorium, 3
             ));
             
             itemDuration = 60f;
@@ -139,7 +139,7 @@ public class SingularityBlocks {
             ambientSoundVolume = 0.09f;
         }};
         
-        // Reactor 3: Neodimio (Alta eficiencia, muy comilón)
+        // Reactor Gamma (antes Neodimio) - 150k/s
         singularityReactorNeodymium = new ConsumeGenerator("singularity-reactor-neodymium") {{
             requirements(Category.power, with(
                 Items.plastanium, 1800,
@@ -156,13 +156,13 @@ public class SingularityBlocks {
             powerProduction = 2500f;
             
             // MUY COMILÓN
-            consumeLiquid(Liquids.water, 8f / 60f);
-            consumeLiquid(Liquids.cryofluid, 5f / 60f);
-            consumeLiquid(Liquids.slag, 2f / 60f);
+            consumeLiquid(Liquids.water, 40f / 60f);  // x5 más
+            consumeLiquid(Liquids.cryofluid, 25f / 60f);  // x5 más
+            consumeLiquid(Liquids.slag, 10f / 60f);  // x5 más
             
             consumeItems(with(
-                Items.plastanium, 1,
-                Items.thorium, 1
+                Items.plastanium, 5,  // x5 más
+                Items.thorium, 4
             ));
             
             itemDuration = 60f;
@@ -179,7 +179,7 @@ public class SingularityBlocks {
             ambientSoundVolume = 0.12f;
         }};
         
-        // Reactor 4: Impactador (El más peligroso y potente)
+        // Reactor Omega (antes Impactador) - 250k/s
         singularityReactorImpactor = new ConsumeGenerator("singularity-reactor-impactor") {{
             requirements(Category.power, with(
                 Items.plastanium, 3000,
@@ -196,14 +196,14 @@ public class SingularityBlocks {
             powerProduction = 4166.67f;
             
             // BRUTALMENTE COMILÓN
-            consumeLiquid(Liquids.water, 15f / 60f);
-            consumeLiquid(Liquids.cryofluid, 10f / 60f);
-            consumeLiquid(Liquids.slag, 5f / 60f);
-            consumeLiquid(Liquids.oil, 3f / 60f);
+            consumeLiquid(Liquids.water, 75f / 60f);  // x5 más
+            consumeLiquid(Liquids.cryofluid, 50f / 60f);  // x5 más
+            consumeLiquid(Liquids.slag, 25f / 60f);  // x5 más
+            consumeLiquid(Liquids.oil, 15f / 60f);  // x5 más
             
             consumeItems(with(
-                Items.plastanium, 1,
-                Items.thorium, 1
+                Items.plastanium, 7,  // x7 más
+                Items.thorium, 5
             ));
             
             itemDuration = 60f;

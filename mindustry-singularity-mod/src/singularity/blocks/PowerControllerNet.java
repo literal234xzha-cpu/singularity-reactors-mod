@@ -2,10 +2,11 @@ package singularity.blocks;
 
 import arc.graphics.Color;
 import arc.math.Mathf;
-import arc.scene.ui.*;
 import arc.scene.ui.layout.Table;
 import arc.struct.Seq;
 import arc.util.Strings;
+import arc.util.io.Reads;
+import arc.util.io.Writes;
 import mindustry.game.Team;
 import mindustry.gen.*;
 import mindustry.graphics.Pal;
@@ -15,15 +16,13 @@ import mindustry.world.blocks.power.*;
 import mindustry.world.meta.*;
 
 /**
- * PowerControllerNet — Gestor de red eléctrica completa (estilo "Shizuku").
+ * PowerControllerNet — Gestor de red eléctrica completa.
  *
- * Accede a la red via PowerGraph sin tocar directamente cada bloque.
- * Puede:
- *  - Ver producción / consumo / baterías de toda la red
- *  - Listar y toggle ON/OFF productores, consumidores y baterías
- *  - Aplicar un cap global de producción a la red (limita todos los productores)
- *  - Modo de emergencia: apaga todos los consumidores no esenciales
- *  - Ver satisfacción y balance en tiempo real
+ * Accede a la red via PowerGraph. Puede:
+ *  - Ver producción / consumo / baterías
+ *  - Toggle ON/OFF productores, consumidores y baterías
+ *  - Cap global de producción
+ *  - Modo emergencia: apaga consumidores no esenciales
  */
 public class PowerControllerNet extends Block {
 
@@ -51,22 +50,18 @@ public class PowerControllerNet extends Block {
         stats.add(Stat.powerUse, 5f, StatUnit.powerSecond);
     }
 
-    // =========================================================================
-    // BUILD
-    // =========================================================================
-
     public class PowerControllerNetBuild extends Building {
 
-        // Cap global de producción (0.0 – 1.0), aplicado a todos los productores
         public float globalProductionCap = 1.0f;
-
-        // Modo emergencia: deshabilita consumidores
         public boolean emergencyMode = false;
+        /** Buildings disabled by emergency mode; restored on exit. */
+        private final Seq<Building> emergencyDisabled = new Seq<>();
 
-        // Pestaña activa: 0=resumen, 1=productores, 2=consumidores, 3=baterias
+        /** 0=productores, 1=consumidores, 2=baterías */
         public int activeTab = 0;
 
-        // Cache de listas del grafo (se refresca desde el grafo en cada draw)
+        private Table configTable;
+
         private PowerGraph cachedGraph() {
             return (power != null) ? power.graph : null;
         }
@@ -82,7 +77,6 @@ public class PowerControllerNet extends Block {
             PowerGraph graph = cachedGraph();
             if (graph == null) return;
 
-            // Aplicar cap global a todos los productores del grafo
             for (Building b : graph.producers) {
                 if (!(b instanceof PowerGenerator.GeneratorBuild gen)) continue;
                 if (!gen.enabled) continue;
@@ -92,21 +86,52 @@ public class PowerControllerNet extends Block {
                 }
             }
 
-            // Modo emergencia: deshabilita consumidores (excepto generadores)
             if (emergencyMode) {
                 for (Building b : graph.consumers) {
                     if (b instanceof PowerGenerator.GeneratorBuild) continue;
-                    b.enabled = false;
+                    if (b.enabled) {
+                        b.enabled = false;
+                        if (!emergencyDisabled.contains(b)) {
+                            emergencyDisabled.add(b);
+                        }
+                    }
                 }
             }
         }
 
-        // =========================================================================
-        // UI
-        // =========================================================================
+        private void setEmergency(boolean on) {
+            PowerGraph graph = cachedGraph();
+            if (on) {
+                emergencyMode = true;
+                emergencyDisabled.clear();
+                if (graph != null) {
+                    for (Building b : graph.consumers) {
+                        if (b instanceof PowerGenerator.GeneratorBuild) continue;
+                        if (b.enabled) {
+                            b.enabled = false;
+                            emergencyDisabled.add(b);
+                        }
+                    }
+                }
+            } else {
+                emergencyMode = false;
+                for (Building b : emergencyDisabled) {
+                    if (b != null && b.isAdded()) b.enabled = true;
+                }
+                emergencyDisabled.clear();
+            }
+        }
+
+        private void rebuildUI() {
+            if (configTable == null) return;
+            configTable.clearChildren();
+            buildUI(configTable);
+        }
 
         @Override
         public void buildConfiguration(Table table) {
+            configTable = table;
+            table.clearChildren();
             buildUI(table);
         }
 
@@ -115,39 +140,55 @@ public class PowerControllerNet extends Block {
 
             t.defaults().pad(3f);
 
-            // ---- Título ----
             t.add("[accent]⚡ POWER CONTROLLER NET[]").center().colspan(2).row();
             t.image().color(Pal.accent).height(2f).growX().colspan(2).pad(2f).row();
 
-            // ---- Stats de red ----
             if (graph != null) {
-                float prod = graph.getPowerProduced() * 60f;
-                float cons = graph.getPowerNeeded()   * 60f;
-                float sat  = graph.getSatisfaction();
-                float batStored = graph.getBatteryStored();
-                float batCap    = graph.getTotalBatteryCapacity();
-
                 t.table(st -> {
                     st.defaults().pad(2f).left();
                     st.add("[lightgray]Producción:[]").left();
-                    st.add("[green]" + fmt(prod) + "/s[]").right().row();
+                    st.label(() -> {
+                        PowerGraph g = cachedGraph();
+                        float prod = g == null ? 0 : g.getPowerProduced() * 60f;
+                        return "[green]" + fmt(prod) + "/s[]";
+                    }).right().row();
                     st.add("[lightgray]Consumo:[]").left();
-                    st.add("[red]" + fmt(cons) + "/s[]").right().row();
+                    st.label(() -> {
+                        PowerGraph g = cachedGraph();
+                        float cons = g == null ? 0 : g.getPowerNeeded() * 60f;
+                        return "[red]" + fmt(cons) + "/s[]";
+                    }).right().row();
                     st.add("[lightgray]Balance:[]").left();
-                    float bal = prod - cons;
-                    String balStr = (bal >= 0 ? "[green]+" : "[red]") + fmt(bal) + "/s[]";
-                    st.add(balStr).right().row();
+                    st.label(() -> {
+                        PowerGraph g = cachedGraph();
+                        if (g == null) return "[gray]—[]";
+                        float bal = (g.getPowerProduced() - g.getPowerNeeded()) * 60f;
+                        return (bal >= 0 ? "[green]+" : "[red]") + fmt(bal) + "/s[]";
+                    }).right().row();
                     st.add("[lightgray]Satisfacción:[]").left();
-                    Color sc = sat >= 0.99f ? Color.green : sat >= 0.5f ? Color.yellow : Color.red;
-                    st.add(hexColor(sc) + (int)(sat * 100f) + "%[]").right().row();
-                    if (batCap > 0) {
-                        st.add("[lightgray]Baterías:[]").left();
-                        st.add("[cyan]" + fmt(batStored) + " / " + fmt(batCap) + "[]").right().row();
-                    }
+                    st.label(() -> {
+                        PowerGraph g = cachedGraph();
+                        if (g == null) return "[gray]—[]";
+                        float sat = g.getSatisfaction();
+                        Color sc = sat >= 0.99f ? Color.green : sat >= 0.5f ? Color.yellow : Color.red;
+                        return hexColor(sc) + (int)(sat * 100f) + "%[]";
+                    }).right().row();
+                    st.add("[lightgray]Baterías:[]").left();
+                    st.label(() -> {
+                        PowerGraph g = cachedGraph();
+                        if (g == null) return "[gray]—[]";
+                        return "[cyan]" + fmt(g.getBatteryStored()) + " / " + fmt(g.getTotalBatteryCapacity()) + "[]";
+                    }).right().row();
                     st.add("[lightgray]Productores:[]").left();
-                    st.add("[accent]" + graph.producers.size + "[]").right().row();
+                    st.label(() -> {
+                        PowerGraph g = cachedGraph();
+                        return "[accent]" + (g == null ? 0 : g.producers.size) + "[]";
+                    }).right().row();
                     st.add("[lightgray]Consumidores:[]").left();
-                    st.add("[accent]" + graph.consumers.size + "[]").right().row();
+                    st.label(() -> {
+                        PowerGraph g = cachedGraph();
+                        return "[accent]" + (g == null ? 0 : g.consumers.size) + "[]";
+                    }).right().row();
                 }).colspan(2).growX().row();
             } else {
                 t.add("[gray]Sin red eléctrica conectada[]").colspan(2).center().row();
@@ -155,54 +196,41 @@ public class PowerControllerNet extends Block {
 
             t.image().color(Color.gray).height(1f).growX().colspan(2).pad(2f).row();
 
-            // ---- Cap global de producción ----
             t.add("[lightgray]Cap global producción:[]").left();
             t.table(ct -> {
-                ct.button("[lightgray]-10%[]", () -> {
-                    globalProductionCap = Mathf.clamp(globalProductionCap - 0.10f, 0f, 1f);
-                }).size(52f, 28f);
+                ct.button("[lightgray]-10%[]", () ->
+                    globalProductionCap = Mathf.clamp(globalProductionCap - 0.10f, 0f, 1f)
+                ).size(52f, 28f);
                 ct.label(() -> {
                     int pct = (int)(globalProductionCap * 100f);
                     Color c = pct >= 75 ? Color.green : pct >= 40 ? Color.yellow : Color.red;
                     return hexColor(c) + pct + "%[]";
                 }).minWidth(40f).center();
-                ct.button("[lightgray]+10%[]", () -> {
-                    globalProductionCap = Mathf.clamp(globalProductionCap + 0.10f, 0f, 1f);
-                }).size(52f, 28f);
+                ct.button("[lightgray]+10%[]", () ->
+                    globalProductionCap = Mathf.clamp(globalProductionCap + 0.10f, 0f, 1f)
+                ).size(52f, 28f);
                 ct.button("[white]100%[]", () -> globalProductionCap = 1.0f).size(44f, 28f);
             }).right().row();
 
             t.image().color(Color.gray).height(1f).growX().colspan(2).pad(2f).row();
 
-            // ---- Modo emergencia ----
             t.table(em -> {
                 em.add("[lightgray]Modo emergencia:[]").left().padRight(8f);
-                em.button(btn -> {
-                    btn.clearChildren();
-                    btn.add(new Label(emergencyMode ? "[red]ACTIVO[]" : "[gray]INACTIVO[]")).center();
-                }, () -> {
-                    emergencyMode = !emergencyMode;
-                    // Al desactivar, re-habilitar consumidores
-                    if (!emergencyMode && graph != null) {
-                        for (Building b : graph.consumers) {
-                            if (!(b instanceof PowerGenerator.GeneratorBuild)) {
-                                b.enabled = true;
-                            }
-                        }
-                    }
-                }).size(90f, 30f);
+                em.button("", () -> {
+                    setEmergency(!emergencyMode);
+                    rebuildUI();
+                }).update(b -> b.setText(emergencyMode ? "[red]ACTIVO[]" : "[gray]INACTIVO[]"))
+                  .size(90f, 30f);
             }).colspan(2).left().row();
 
             t.image().color(Color.gray).height(1f).growX().colspan(2).pad(2f).row();
 
-            // ---- Pestañas: productores / consumidores / baterías ----
             t.table(tabs -> {
-                tabs.button("[accent]Productores[]",  () -> activeTab = 0).size(90f, 26f).pad(2f);
-                tabs.button("[red]Consumidores[]",    () -> activeTab = 1).size(90f, 26f).pad(2f);
-                tabs.button("[cyan]Baterías[]",       () -> activeTab = 2).size(70f, 26f).pad(2f);
+                tabs.button("[accent]Productores[]", () -> { activeTab = 0; rebuildUI(); }).size(90f, 26f).pad(2f);
+                tabs.button("[red]Consumidores[]", () -> { activeTab = 1; rebuildUI(); }).size(90f, 26f).pad(2f);
+                tabs.button("[cyan]Baterías[]", () -> { activeTab = 2; rebuildUI(); }).size(70f, 26f).pad(2f);
             }).colspan(2).center().row();
 
-            // Lista según pestaña activa
             if (graph != null) {
                 Seq<Building> list = activeTab == 0 ? graph.producers
                                    : activeTab == 1 ? graph.consumers
@@ -212,31 +240,32 @@ public class PowerControllerNet extends Block {
 
             t.image().color(Color.gray).height(1f).growX().colspan(2).pad(2f).row();
 
-            // ---- Acciones globales ----
             t.table(bt -> {
                 bt.button("[green]Prod. ON[]", () -> {
-                    if (graph != null) for (Building b : graph.producers) b.enabled = true;
+                    PowerGraph g = cachedGraph();
+                    if (g != null) for (Building b : g.producers) b.enabled = true;
                 }).size(80f, 28f).pad(2f);
                 bt.button("[red]Prod. OFF[]", () -> {
-                    if (graph != null) for (Building b : graph.producers) b.enabled = false;
+                    PowerGraph g = cachedGraph();
+                    if (g != null) for (Building b : g.producers) b.enabled = false;
                 }).size(80f, 28f).pad(2f);
                 bt.button("[green]Cons. ON[]", () -> {
-                    if (graph != null) for (Building b : graph.consumers) b.enabled = true;
+                    PowerGraph g = cachedGraph();
+                    if (g != null) for (Building b : g.consumers) b.enabled = true;
                 }).size(80f, 28f).pad(2f);
                 bt.button("[red]Cons. OFF[]", () -> {
-                    if (graph != null) for (Building b : graph.consumers) b.enabled = false;
+                    PowerGraph g = cachedGraph();
+                    if (g != null) for (Building b : g.consumers) b.enabled = false;
                 }).size(80f, 28f).pad(2f);
             }).colspan(2).center().row();
         }
 
-        /** Dibuja la lista de bloques con toggle ON/OFF. */
         private void buildList(Table t, Seq<Building> list) {
             if (list.isEmpty()) {
                 t.add("[gray]Lista vacía[]").colspan(2).center().pad(4f).row();
                 return;
             }
 
-            // Máximo 10 entradas para no desbordar la UI
             int max = Math.min(list.size, 10);
             for (int i = 0; i < max; i++) {
                 Building b = list.get(i);
@@ -244,10 +273,9 @@ public class PowerControllerNet extends Block {
                 if (name.length() > 18) name = name.substring(0, 16) + "..";
 
                 t.add("[white]" + name + "[]").left().minWidth(150f).padLeft(4f);
-                t.button(btn -> {
-                    btn.clearChildren();
-                    btn.add(new Label(b.enabled ? "[green]ON[]" : "[red]OFF[]")).center();
-                }, () -> b.enabled = !b.enabled).size(60f, 26f).right().padRight(4f).row();
+                t.button("", () -> b.enabled = !b.enabled)
+                    .update(btn -> btn.setText(b.enabled ? "[green]ON[]" : "[red]OFF[]"))
+                    .size(60f, 26f).right().padRight(4f).row();
             }
 
             if (list.size > 10) {
@@ -264,6 +292,20 @@ public class PowerControllerNet extends Block {
 
         private String hexColor(Color c) {
             return "[#" + c.toString().substring(0, 6) + "]";
+        }
+
+        @Override
+        public void write(Writes write) {
+            super.write(write);
+            write.f(globalProductionCap);
+            write.bool(emergencyMode);
+        }
+
+        @Override
+        public void read(Reads read, byte revision) {
+            super.read(read, revision);
+            globalProductionCap = read.f();
+            emergencyMode = read.bool();
         }
 
         @Override

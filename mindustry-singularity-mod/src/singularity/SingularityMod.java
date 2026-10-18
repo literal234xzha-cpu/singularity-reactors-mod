@@ -18,10 +18,17 @@ public class SingularityMod extends Mod {
     @Override
     public void loadContent() {
         Log.info("[Singularity] Cargando contenido del mod...");
-        
+
         // Cargar bloques en orden de dependencia
         SingularityBlocks.load();
-        
+
         Log.info("[Singularity] ✓ Contenido cargado exitosamente");
+    }
+
+    @Override
+    public void init() {
+        // Chequear actualizaciones en segundo plano (no bloquea el juego)
+        Log.info("[Singularity] Verificando actualizaciones...");
+        UpdateChecker.checkAsync();
     }
 }

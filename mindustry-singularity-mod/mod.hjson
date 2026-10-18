@@ -11,10 +11,10 @@ author: "LOLOCORD"
 main: "singularity.SingularityMod"
 
 #the mod description as seen in the mod dialog
-description: "Agrega 4 reactores de singularidad extremadamente potentes y 3 nodos de energía mejorados. Los reactores generan cantidades masivas de energía pero requieren recursos constantes y explotan catastróficamente si fallan."
+description: "Reactores Alpha, Beta, Gamma y Omega. Generan energía masiva pero consumen recursos brutales. Incluye nodos mejorados."
 
 #the mod version
-version: 1.0.2
+version: 2.0.0
 
 #the minimum game build required to run this mod
 minGameVersion: 160.3

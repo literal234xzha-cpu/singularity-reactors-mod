@@ -14,7 +14,7 @@ main: "singularity.SingularityMod"
 description: "Reactores Alpha, Beta, Gamma y Omega. Generan energía masiva pero consumen recursos brutales. Incluye nodos mejorados."
 
 #the mod version
-version: 2.0.0
+version: 2.0.1
 
 #the minimum game build required to run this mod
 minGameVersion: 160.3

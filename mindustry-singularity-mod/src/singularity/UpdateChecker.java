@@ -20,7 +20,7 @@ import java.net.*;
 public class UpdateChecker {
 
     /** Versión actual del mod (debe coincidir con mod.hjson). */
-    public static final String CURRENT_VERSION = "2.0.0";
+    public static final String CURRENT_VERSION = "2.0.1";
 
     /**
      * URL de la API de GitHub que devuelve JSON con el campo "tag_name".

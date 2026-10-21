@@ -12,11 +12,11 @@ import mindustry.world.*;
 import mindustry.world.meta.*;
 
 /**
- * UniversalBlockManager — Gestor universal de bloques configurables.
+ * UniversalBlockManager - Gestor universal de bloques configurables.
  *
  * Detecta en rango bloques con:
- *  - update → toggle ON/OFF
- *  - config Item / Liquid → selector
+ *  - update -> toggle ON/OFF
+ *  - config Item / Liquid -> selector
  */
 public class UniversalBlockManager extends Block {
 
@@ -109,7 +109,7 @@ public class UniversalBlockManager extends Block {
         private void buildUI(Table t) {
             t.defaults().pad(3f);
 
-            t.add("[accent]◈ UNIVERSAL BLOCK MANAGER[]").center().colspan(2).row();
+            t.add("[accent]* UNIVERSAL BLOCK MANAGER[]").center().colspan(2).row();
             t.image().color(Pal.accent).height(2f).growX().colspan(2).pad(2f).row();
 
             t.label(() -> "[lightgray]Rango: " + manageRange + " tiles   Bloques: [accent]"
@@ -122,7 +122,7 @@ public class UniversalBlockManager extends Block {
                 tabs.button("[cyan]Toggle[]", () -> { activeTab = 1; rebuildUI(); }).size(60f, 26f).pad(1f);
                 tabs.button("[yellow]Item[]", () -> { activeTab = 2; rebuildUI(); }).size(55f, 26f).pad(1f);
                 tabs.button("[violet]Líquido[]", () -> { activeTab = 3; rebuildUI(); }).size(65f, 26f).pad(1f);
-                tabs.button("[lightgray]↺[]", () -> { scanBlocks(); rebuildUI(); }).size(36f, 26f).pad(1f);
+                tabs.button("[lightgray]R[]", () -> { scanBlocks(); rebuildUI(); }).size(36f, 26f).pad(1f);
             }).colspan(2).center().row();
 
             t.image().color(Color.darkGray).height(1f).growX().colspan(2).pad(1f).row();
@@ -161,7 +161,7 @@ public class UniversalBlockManager extends Block {
 
             t.table(nt -> {
                 nt.add("[white]" + displayName + "[]").left().minWidth(120f);
-                nt.label(() -> b.enabled ? "[green]●[]" : "[red]●[]").padLeft(4f);
+                nt.label(() -> b.enabled ? "[green]*[]" : "[red]*[]").padLeft(4f);
             }).left();
 
             t.table(ct -> {
@@ -199,7 +199,7 @@ public class UniversalBlockManager extends Block {
                 b.configure(items.get(next));
             }).size(26f, 26f).pad(1f);
 
-            t.button("[gray]∅[]", () -> b.configure(null)).size(26f, 26f).pad(1f);
+            t.button("[gray]X[]", () -> b.configure(null)).size(26f, 26f).pad(1f);
         }
 
         private void buildLiquidSelector(Table t, Building b) {
@@ -224,7 +224,7 @@ public class UniversalBlockManager extends Block {
                 b.configure(liquids.get(next));
             }).size(26f, 26f).pad(1f);
 
-            t.button("[gray]∅[]", () -> b.configure(null)).size(26f, 26f).pad(1f);
+            t.button("[gray]X[]", () -> b.configure(null)).size(26f, 26f).pad(1f);
         }
 
         private Seq<Building> getFiltered() {
@@ -232,11 +232,17 @@ public class UniversalBlockManager extends Block {
 
             Seq<Building> result = new Seq<>();
             for (Building b : managed) {
-                switch (activeTab) {
-                    case 1 -> { if (b.block.update) result.add(b); }
-                    case 2 -> { if (supportsItemConfig(b)) result.add(b); }
-                    case 3 -> { if (supportsLiquidConfig(b)) result.add(b); }
+                boolean pass;
+                if (activeTab == 1) {
+                    pass = b.block.update;
+                } else if (activeTab == 2) {
+                    pass = supportsItemConfig(b);
+                } else if (activeTab == 3) {
+                    pass = supportsLiquidConfig(b);
+                } else {
+                    pass = true;
                 }
+                if (pass) result.add(b);
             }
             return result;
         }
@@ -268,7 +274,7 @@ public class UniversalBlockManager extends Block {
         private Item getCurrentItem(Building b) {
             try {
                 Object cfg = b.config();
-                return cfg instanceof Item item ? item : null;
+                return (cfg instanceof Item) ? (Item) cfg : null;
             } catch (Exception e) {
                 return null;
             }
@@ -277,7 +283,7 @@ public class UniversalBlockManager extends Block {
         private Liquid getCurrentLiquid(Building b) {
             try {
                 Object cfg = b.config();
-                return cfg instanceof Liquid liq ? liq : null;
+                return (cfg instanceof Liquid) ? (Liquid) cfg : null;
             } catch (Exception e) {
                 return null;
             }

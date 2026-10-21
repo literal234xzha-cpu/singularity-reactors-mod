@@ -17,11 +17,11 @@ import mindustry.world.blocks.power.PowerGenerator;
 import mindustry.world.meta.*;
 
 /**
- * PowerControllerRoot — Controlador directo de generadores.
+ * PowerControllerRoot - Controlador directo de generadores.
  *
  * Detecta generadores en un rango corto y permite:
  *  - Toggle ON / OFF  (building.enabled)
- *  - Cap de producción 0–100%  (productionEfficiency)
+ *  - Cap de producción 0-100%  (productionEfficiency)
  *  - Botones globales: todos ON / todos OFF / rescan
  */
 public class PowerControllerRoot extends Block {
@@ -98,7 +98,8 @@ public class PowerControllerRoot extends Block {
                 for (int dy = -controlRange; dy <= controlRange; dy++) {
                     Building b = Vars.world.build(tx + dx, ty + dy);
                     if (b == null || b.team != team || b == this) continue;
-                    if (!(b instanceof PowerGenerator.GeneratorBuild gen)) continue;
+                    if (!(b instanceof PowerGenerator.GeneratorBuild)) continue;
+                    PowerGenerator.GeneratorBuild gen = (PowerGenerator.GeneratorBuild) b;
                     if (generators.contains(gen)) continue;
 
                     generators.add(gen);
@@ -126,7 +127,7 @@ public class PowerControllerRoot extends Block {
         private void buildUI(Table t) {
             t.defaults().pad(3f).left();
 
-            t.add("[accent]⚡ CONTROLLER ROOT[]").center().colspan(3).row();
+            t.add("[accent]~ CONTROLLER ROOT[]").center().colspan(3).row();
             t.image().color(Pal.accent).height(2f).growX().colspan(3).pad(2f).row();
 
             t.label(() -> "[lightgray]Rango: " + controlRange + " tiles   Detectados: [accent]"
@@ -183,7 +184,7 @@ public class PowerControllerRoot extends Block {
                     for (PowerGenerator.GeneratorBuild g : generators) g.enabled = false;
                 }).size(88f, 30f).pad(3f);
 
-                bt.button("[lightgray]↺ Rescan[]", () -> {
+                bt.button("[lightgray]R Rescan[]", () -> {
                     scanGenerators();
                     rebuildUI();
                 }).size(80f, 30f).pad(3f);

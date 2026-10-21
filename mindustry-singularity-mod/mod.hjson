@@ -3,6 +3,6 @@ name: "singularity-reactors"
 author: "LOLOCORD"
 main: "singularity.SingularityMod"
 description: "Reactores Alpha, Beta, Gamma y Omega (50k–250k/s). Nodos de energía y bloques de gestión (monitor, controllers, líquidos)."
-version: "2.0.3"
+version: "2.0.4"
 minGameVersion: "160.3"
 java: true

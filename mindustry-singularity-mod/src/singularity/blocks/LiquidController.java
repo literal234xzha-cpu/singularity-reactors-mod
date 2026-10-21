@@ -14,7 +14,7 @@ import mindustry.world.*;
 import mindustry.world.meta.*;
 
 /**
- * LiquidController — Gestor de tuberías y bloques con líquidos.
+ * LiquidController - Gestor de tuberías y bloques con líquidos.
  */
 public class LiquidController extends Block {
 
@@ -105,12 +105,16 @@ public class LiquidController extends Block {
         private Seq<Building> getFiltered() {
             Seq<Building> result = new Seq<>();
             for (Building b : liquidBlocks) {
-                boolean pass = switch (activeTab) {
-                    case 1 -> isLowLevel(b);
-                    case 2 -> b.enabled;
-                    case 3 -> !b.enabled;
-                    default -> true;
-                };
+                boolean pass;
+                if (activeTab == 1) {
+                    pass = isLowLevel(b);
+                } else if (activeTab == 2) {
+                    pass = b.enabled;
+                } else if (activeTab == 3) {
+                    pass = !b.enabled;
+                } else {
+                    pass = true;
+                }
                 if (!pass) continue;
 
                 if (filterLiquid != null && b.liquids != null) {
@@ -138,7 +142,7 @@ public class LiquidController extends Block {
         private void buildUI(Table t) {
             t.defaults().pad(3f);
 
-            t.add("[cyan]💧 LIQUID CONTROLLER[]").center().colspan(3).row();
+            t.add("[cyan]LIQUID CONTROLLER[]").center().colspan(3).row();
             t.image().color(Color.valueOf("44aacc")).height(2f).growX().colspan(3).pad(2f).row();
 
             t.table(st -> {
@@ -147,8 +151,8 @@ public class LiquidController extends Block {
                     int active = 0;
                     for (Building b : liquidBlocks) if (b.enabled) active++;
                     String alerts = lowAlerts > 0
-                        ? "[red]⚠ " + lowAlerts + " nivel bajo[]"
-                        : "[green]✓ Niveles OK[]";
+                        ? "[red]! " + lowAlerts + " nivel bajo[]"
+                        : "[green]OK Niveles OK[]";
                     return "[lightgray]Rango: [cyan]" + liquidRange + " tiles[]   "
                         + "[lightgray]Bloques: [accent]" + liquidBlocks.size + "[]   "
                         + "[lightgray]Activos: [green]" + active + "[]   " + alerts;
@@ -186,7 +190,7 @@ public class LiquidController extends Block {
                     rebuildUI();
                 }).size(28f, 26f);
 
-                ft.button("[gray]∅[]", () -> {
+                ft.button("[gray]X[]", () -> {
                     filterLiquid = null;
                     rebuildUI();
                 }).size(26f, 26f);
@@ -196,10 +200,10 @@ public class LiquidController extends Block {
 
             t.table(tabs -> {
                 tabs.button("[white]Todos[]", () -> { activeTab = 0; rebuildUI(); }).size(58f, 26f).pad(1f);
-                tabs.button("[red]⚠ Alertas[]", () -> { activeTab = 1; rebuildUI(); }).size(72f, 26f).pad(1f);
+                tabs.button("[red]! Alertas[]", () -> { activeTab = 1; rebuildUI(); }).size(72f, 26f).pad(1f);
                 tabs.button("[green]Activos[]", () -> { activeTab = 2; rebuildUI(); }).size(62f, 26f).pad(1f);
                 tabs.button("[gray]Inactivos[]", () -> { activeTab = 3; rebuildUI(); }).size(72f, 26f).pad(1f);
-                tabs.button("[lightgray]↺[]", () -> { scanBlocks(); rebuildUI(); }).size(34f, 26f).pad(1f);
+                tabs.button("[lightgray]R[]", () -> { scanBlocks(); rebuildUI(); }).size(34f, 26f).pad(1f);
             }).colspan(3).center().row();
 
             t.image().color(Color.darkGray).height(1f).growX().colspan(3).pad(1f).row();
@@ -253,7 +257,7 @@ public class LiquidController extends Block {
 
             t.table(nt -> {
                 if (isLowLevel(b)) {
-                    nt.add("[red]⚠ []").padRight(2f);
+                    nt.add("[red]! []").padRight(2f);
                 }
                 nt.add("[white]" + name + "[]").left();
             }).left().minWidth(110f).padLeft(4f);

@@ -16,7 +16,7 @@ import mindustry.world.blocks.power.*;
 import mindustry.world.meta.*;
 
 /**
- * PowerControllerNet — Gestor de red eléctrica completa.
+ * PowerControllerNet - Gestor de red eléctrica completa.
  *
  * Accede a la red via PowerGraph. Puede:
  *  - Ver producción / consumo / baterías
@@ -78,7 +78,8 @@ public class PowerControllerNet extends Block {
             if (graph == null) return;
 
             for (Building b : graph.producers) {
-                if (!(b instanceof PowerGenerator.GeneratorBuild gen)) continue;
+                if (!(b instanceof PowerGenerator.GeneratorBuild)) continue;
+                PowerGenerator.GeneratorBuild gen = (PowerGenerator.GeneratorBuild) b;
                 if (!gen.enabled) continue;
                 if (gen.productionEfficiency > globalProductionCap) {
                     gen.productionEfficiency = Mathf.lerpDelta(
@@ -140,7 +141,7 @@ public class PowerControllerNet extends Block {
 
             t.defaults().pad(3f);
 
-            t.add("[accent]⚡ POWER CONTROLLER NET[]").center().colspan(2).row();
+            t.add("[accent]~ POWER CONTROLLER NET[]").center().colspan(2).row();
             t.image().color(Pal.accent).height(2f).growX().colspan(2).pad(2f).row();
 
             if (graph != null) {
@@ -161,14 +162,14 @@ public class PowerControllerNet extends Block {
                     st.add("[lightgray]Balance:[]").left();
                     st.label(() -> {
                         PowerGraph g = cachedGraph();
-                        if (g == null) return "[gray]—[]";
+                        if (g == null) return "[gray]-[]";
                         float bal = (g.getPowerProduced() - g.getPowerNeeded()) * 60f;
                         return (bal >= 0 ? "[green]+" : "[red]") + fmt(bal) + "/s[]";
                     }).right().row();
                     st.add("[lightgray]Satisfacción:[]").left();
                     st.label(() -> {
                         PowerGraph g = cachedGraph();
-                        if (g == null) return "[gray]—[]";
+                        if (g == null) return "[gray]-[]";
                         float sat = g.getSatisfaction();
                         Color sc = sat >= 0.99f ? Color.green : sat >= 0.5f ? Color.yellow : Color.red;
                         return hexColor(sc) + (int)(sat * 100f) + "%[]";
@@ -176,7 +177,7 @@ public class PowerControllerNet extends Block {
                     st.add("[lightgray]Baterías:[]").left();
                     st.label(() -> {
                         PowerGraph g = cachedGraph();
-                        if (g == null) return "[gray]—[]";
+                        if (g == null) return "[gray]-[]";
                         return "[cyan]" + fmt(g.getBatteryStored()) + " / " + fmt(g.getTotalBatteryCapacity()) + "[]";
                     }).right().row();
                     st.add("[lightgray]Productores:[]").left();

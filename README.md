@@ -1,102 +1,58 @@
-# LOLOCORD - APK & Native Library Decompiler Toolkit
+# Singularity Reactors
 
-Herramienta de análisis y descompilación para APKs Android y librerías nativas (`.so`).
+Mod de Mindustry con reactores de alta potencia, nodos de energía y bloques de gestión de red.
 
-## Inicio rápido
+- **Mindustry**: v160.3+
+- **Java**: 17+
+- **Versión**: 2.0.2
+
+## Bloques
+
+### Reactores (ConsumeGenerator)
+
+| Reactor | Tamaño | Energía | Consumo principal |
+|---------|--------|---------|-------------------|
+| Alpha   | 5×5    | 50k/s   | Agua 12/s, Cryo 8/s, Plastanium 3/s, Thorium 2/s |
+| Beta    | 6×6    | 80k/s   | Agua 20/s, Cryo 12/s, Plastanium 4/s, Thorium 3/s |
+| Gamma   | 7×7    | 150k/s  | + Slag 10/s |
+| Omega   | 8×8    | 250k/s  | + Slag/Oil, consumo máximo |
+
+Si faltan recursos, la producción cae (sin explosión automática).
+
+### Nodos
+
+- **Nodo-R**: 1×1, rango 8, 6 conexiones
+- **Nodo-P**: 2×2, rango 20, 15 conexiones
+- **Nodo-SC**: 2×2, rango 40, 25 conexiones (consume 500/s)
+
+### Gestión
+
+- **Monitor de Energía** — producción/consumo/balance + historial
+- **Controller Root** — ON/OFF y cap por generador (rango 8)
+- **Controller Net** — control de toda la PowerGraph + modo emergencia
+- **Gestor Universal** — toggle y config item/líquido en rango
+- **Liquid Controller** — niveles, alertas y toggle de bloques con líquidos
+
+## Build
 
 ```bash
-# Build the native decompiler binary (no Python deps required)
-make
-
-# Analyze any .so file
-./dl il2cpp --info      # Info del ELF
-./dl il2cpp --patch     # Buscar parches SUB→ADD
-./dl il2cpp --disasm    # Disassembly completo
+./gradlew jar
+# Salida: build/libs/singularity-reactors-modDesktop.jar
 ```
 
-## Características
+Copia el JAR a la carpeta `mods` de Mindustry y reinicia.
 
-| Feature | Descripción |
-|---------|-------------|
-| **Multi-arquitectura** | ARM64, ARM, x86, x86_64 |
-| **Sin dependencias** | Binario C puro, compila con `make` |
-| **Manejo de grandes archivos** | Usa `mmap`, soporta hasta 750MB+ |
-| **Filename smart-resolve** | Escribe solo "il2cpp" o "libunity" |
-| **Detección de parches** | Encuentra instrucciones ADD→SUB modificadas |
+## Instalación
 
-## Uso
+1. Descarga el JAR de [Releases](https://github.com/literal234xzha-cpu/singularity-reactors-mod/releases)
+2. Ponlo en:
+   - Windows: `%APPDATA%/Mindustry/mods/`
+   - Linux: `~/.local/share/Mindustry/mods/`
+   - macOS: `~/Library/Application Support/Mindustry/mods/`
+3. Reinicia Mindustry y activa el mod
 
-### Información del ELF (`--info`)
-```bash
-./dl decompiler/output/.../libil2cpp.so --info
-# [∗] Architecture: ARM64 (machine=0xb7)
-# [∗] Found 3 code sections: .text, il2cpp, .plt
-```
+**Importante:** no uses JARs viejos (`mindustry-singularity-modDesktop.jar` v1). Usa solo el de releases / `build/libs`.
 
-### Detección de parches --patch`
-```bash
-./dl il2cpp --patch
-# Escanea por instrucciones ADD con inmediatos 1000-65535
-# (patrón típico de hack: SUB was changed to ADD)
-```
+## Autor
 
-### Disassembly completo ( --disasm`
-```bash
-./dl libunity.so --disasm
-# Usa objdump para disassembly completo
-```
-
-### Filename smart-resolve
-```bash
-./dl il2cpp          # Encuentra libil2cpp.so automáticamente
-./dl libunity        # Encuentra libunity.so
-./dl ones            # Busca *ones*.so en cwd y subdirectorios
-```
-
-## Cómo funciona el hack del oro
-
-El modificador GameKiller parchea `libil2cpp.so` a nivel binario:
-
-1. **Original**: método `set_Gold` ejecuta `gold -= amount` → instrucción `SUB`
-2. **Hack**: cambia `SUB` a `ADD` → `gold += amount` (ganas oro al gastar)
-3. **Detección**: `--patch` escanea por instructuras `ADD` con inmediates sospechosos
-
-## Estructura del proyecto
-
-```
-LOLOCORD/
-├── decompiler/
-│   ├── decompile_lib.c     # Código fuente C del decompilador nativo
-│   ├── decompile_lib.py    # Versión Python (con capstone)
-│   ├── decompile.py        # Wrapper JADX + Apktool
-│   ├── ANALYSIS_REPORT.md  # Reporte del análisis del APK
-│   ├── README.md           # Esta guía
-│   ├── tools/              # Herramientas externas (jadx, apktool)
-│   ├── apks/               # APKs a analizar
-│   └── output/             # Resultados de descompilación
-├── Makefile                # Build del decompilador nativo
-└── core/                   # Módulos del ofuscador Lua
-```
-
-## Análisis del APK analizado
-
-### Epic Stickman Mod MWahyudiStar
-- **Package:** `com.fansipan.epic.stickman.survival.rpg.idle.game`
-- **Mod:** GameKiller (`com.game.killer`)
-- **Motor:** Unity (libil2cpp.so 149MB)
-- **Entry Point:** `gamesActivity` (splash) → `UnityPlayerActivity`
-
-### Métodos de oro encontrados
-- `get_Gold`, `set_Gold`, `GetGold`, `GetGoldReward`
-- `SetGoldDropValue`, `OnGoldEarnEffectAdd`, `GetGoldDrop`
-
-### SDKs integrados
-AdMob, AppLovin, Unity Ads, IronSource, Vungle, Facebook, Bytedance, Mintegral
-
-## Herramientas incluidas
-
-| Herramienta | Uso |
-|-------------|-----|
-| `dl` | Decompilador nativo (.so) |
-| `decompile.py` | Wrapper JADX + Apktool |
-| `decompile_lib.py` | Versión Python del decompilador nativo |
+LOLOCORD

@@ -19,7 +19,7 @@ import mindustry.world.blocks.power.*;
 import mindustry.world.meta.*;
 
 /**
- * PowerMonitor — Bloque de monitoreo de red eléctrica.
+ * PowerMonitor - Bloque de monitoreo de red eléctrica.
  *
  * Muestra en tiempo real:
  *  - Producción total de la red
@@ -103,7 +103,7 @@ public class PowerMonitor extends Block {
 
             PowerGraph graph = power.graph;
 
-            // Valores en /tick → convertir a /segundo (* 60)
+            // Valores en /tick -> convertir a /segundo (* 60)
             lastProduction   = graph.getPowerProduced()  * 60f;
             lastConsumption  = graph.getPowerNeeded()    * 60f;
             lastBalance      = lastProduction - lastConsumption;
@@ -132,7 +132,7 @@ public class PowerMonitor extends Block {
             t.defaults().pad(4f).left();
 
             // Título
-            t.add("[accent]⚡ POWER MONITOR[]").center().colspan(2).row();
+            t.add("[accent]~ POWER MONITOR[]").center().colspan(2).row();
             t.image().color(Pal.accent).height(2f).growX().colspan(2).pad(2f).row();
 
             // Producción
@@ -167,9 +167,9 @@ public class PowerMonitor extends Block {
             t.label(() -> {
                 if (inDeficit) {
                     boolean blink = ((int)(alertTimer / 30f) % 2) == 0;
-                    return blink ? "[red]⚠ DÉFICIT DE ENERGÍA[]" : "[scarlet]⚠ DÉFICIT[]";
+                    return blink ? "[red]! DÉFICIT DE ENERGÍA[]" : "[scarlet]! DÉFICIT[]";
                 } else if (lastSatisfaction >= 0.99f) {
-                    return "[green]✓ Red estable[]";
+                    return "[green]OK Red estable[]";
                 } else {
                     return "[yellow]~ Energía parcial[]";
                 }
@@ -204,7 +204,7 @@ public class PowerMonitor extends Block {
     }
 
     // =========================================================================
-    // GRÁFICA DE HISTORIAL — clase estática top-level para Table.add()
+    // GRÁFICA DE HISTORIAL - clase estática top-level para Table.add()
     // =========================================================================
 
     public static class HistoryChart extends Element {

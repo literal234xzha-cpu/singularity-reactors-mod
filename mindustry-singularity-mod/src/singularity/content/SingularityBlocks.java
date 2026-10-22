@@ -7,6 +7,7 @@ import mindustry.world.*;
 import mindustry.world.blocks.power.*;
 import mindustry.world.draw.*;
 import singularity.blocks.*;
+import singularity.blocks.delta.*;
 
 import static mindustry.type.ItemStack.*;
 
@@ -25,6 +26,10 @@ public class SingularityBlocks {
     public static Block powerControllerNet;
     public static Block universalBlockManager;
     public static Block liquidController;
+    
+    // Sistema Delta (central nuclear)
+    public static Block deltaReactor, deltaTurbine, deltaCondenser, deltaControlPanel;
+    public static Block deltaLoadRegulator, deltaBreaker, deltaScram, tempSensor;
     
     public static void load() {
         
@@ -290,6 +295,99 @@ public class SingularityBlocks {
             liquidRange = 12;
             lowLevelThreshold = 0.20f;
             consumePower(1.5f);
+        }};
+
+        // ============= SISTEMA DELTA (CENTRAL NUCLEAR) =============
+
+        deltaReactor = new DeltaReactor("delta-reactor") {{
+            requirements(Category.power, with(
+                Items.thorium, 500,
+                Items.surgeAlloy, 300,
+                Items.silicon, 400,
+                Items.phaseFabric, 200,
+                Items.metaglass, 150
+            ));
+            size = 5;
+            health = 2500;
+            liquidCapacity = 100f;
+        }};
+
+        deltaTurbine = new DeltaTurbine("delta-turbine") {{
+            requirements(Category.power, with(
+                Items.titanium, 250,
+                Items.silicon, 150,
+                Items.thorium, 100,
+                Items.plastanium, 80
+            ));
+            size = 3;
+            health = 800;
+        }};
+
+        deltaCondenser = new DeltaCondenser("delta-condenser") {{
+            requirements(Category.liquid, with(
+                Items.titanium, 150,
+                Items.metaglass, 100,
+                Items.silicon, 80
+            ));
+            size = 3;
+            health = 600;
+            liquidCapacity = 120f;
+        }};
+
+        deltaControlPanel = new DeltaControlPanel("delta-control-panel") {{
+            requirements(Category.power, with(
+                Items.silicon, 250,
+                Items.surgeAlloy, 150,
+                Items.phaseFabric, 100,
+                Items.plastanium, 120
+            ));
+            size = 4;
+            health = 1000;
+            consumePower(8f);
+        }};
+
+        deltaLoadRegulator = new DeltaLoadRegulator("delta-load-regulator") {{
+            requirements(Category.power, with(
+                Items.silicon, 120,
+                Items.titanium, 80,
+                Items.surgeAlloy, 60,
+                Items.phaseFabric, 40
+            ));
+            size = 3;
+            health = 600;
+            consumePower(3f);
+        }};
+
+        deltaBreaker = new DeltaBreaker("delta-breaker") {{
+            requirements(Category.power, with(
+                Items.titanium, 20,
+                Items.silicon, 15,
+                Items.surgeAlloy, 10
+            ));
+            size = 1;
+            health = 200;
+        }};
+
+        deltaScram = new DeltaScram("delta-scram") {{
+            requirements(Category.power, with(
+                Items.surgeAlloy, 80,
+                Items.phaseFabric, 50,
+                Items.silicon, 100,
+                Items.plastanium, 60
+            ));
+            size = 2;
+            health = 500;
+            consumePower(2f);
+        }};
+
+        tempSensor = new TempSensor("temp-sensor") {{
+            requirements(Category.power, with(
+                Items.silicon, 15,
+                Items.titanium, 10,
+                Items.metaglass, 8
+            ));
+            size = 1;
+            health = 100;
         }};
     }
 }

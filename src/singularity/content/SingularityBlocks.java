@@ -25,6 +25,12 @@ public class SingularityBlocks {
     public static Block powerControllerNet;
     public static Block universalBlockManager;
     public static Block liquidController;
+
+    // Nuevos monitores y controladores
+    public static Block powerMonitorLocal;
+    public static Block powerMonitorGlobal;
+    public static Block batteryMonitor;
+    public static Block itemController;
     
     public static void load() {
         
@@ -290,6 +296,56 @@ public class SingularityBlocks {
             liquidRange = 12;
             lowLevelThreshold = 0.20f;
             consumePower(1.5f);
+        }};
+
+        // ============= NUEVOS MONITORES =============
+
+        powerMonitorLocal = new PowerMonitorLocal("power-monitor-local") {{
+            requirements(Category.power, with(
+                Items.silicon, 15,
+                Items.titanium, 10,
+                Items.copper, 20
+            ));
+            size = 2;
+            health = 150;
+            consumePower(1f);
+        }};
+
+        powerMonitorGlobal = new PowerMonitorGlobal("power-monitor-global") {{
+            requirements(Category.power, with(
+                Items.silicon, 40,
+                Items.titanium, 30,
+                Items.surgeAlloy, 15,
+                Items.phaseFabric, 8
+            ));
+            size = 3;
+            health = 400;
+            scanRange = 40;
+            consumePower(4f);
+        }};
+
+        batteryMonitor = new BatteryMonitor("battery-monitor") {{
+            requirements(Category.power, with(
+                Items.silicon, 20,
+                Items.titanium, 15,
+                Items.lead, 30
+            ));
+            size = 2;
+            health = 200;
+            monitorRange = 15;
+            consumePower(1.5f);
+        }};
+
+        itemController = new ItemController("item-controller") {{
+            requirements(Category.logic, with(
+                Items.silicon, 30,
+                Items.titanium, 20,
+                Items.copper, 25
+            ));
+            size = 2;
+            health = 250;
+            controlRange = 15;
+            consumePower(2f);
         }};
     }
 }

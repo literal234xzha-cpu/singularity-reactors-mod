@@ -1,58 +1,66 @@
 # Singularity Reactors
 
-Mod de Mindustry con reactores de alta potencia, nodos de energía y bloques de gestión de red.
+[![Version](https://img.shields.io/badge/version-2.0.7-blue.svg)](https://github.com/literal234xzha-cpu/singularity-reactors-mod/releases/latest)
+[![Mindustry](https://img.shields.io/badge/mindustry-v160.3%2B-orange.svg)](https://github.com/Anuken/Mindustry)
+[![Download](https://img.shields.io/github/downloads/literal234xzha-cpu/singularity-reactors-mod/total)](https://github.com/literal234xzha-cpu/singularity-reactors-mod/releases/latest)
 
-- **Mindustry**: v160.3+
-- **Java**: 17+
-- **Versión**: 2.0.2
+Reactores de singularidad extremadamente potentes con un sistema completo de gestion energetica y logistica.
 
-## Bloques
+---
 
-### Reactores (ConsumeGenerator)
+## Reactores (4 variantes)
 
-| Reactor | Tamaño | Energía | Consumo principal |
-|---------|--------|---------|-------------------|
-| Alpha   | 5×5    | 50k/s   | Agua 12/s, Cryo 8/s, Plastanium 3/s, Thorium 2/s |
-| Beta    | 6×6    | 80k/s   | Agua 20/s, Cryo 12/s, Plastanium 4/s, Thorium 3/s |
-| Gamma   | 7×7    | 150k/s  | + Slag 10/s |
-| Omega   | 8×8    | 250k/s  | + Slag/Oil, consumo máximo |
+| Bloque | Produccion | Tamano |
+|--------|-----------|--------|
+| Reactor Alpha | 50,000/s | 5x5 |
+| Reactor Beta  | 80,000/s | 6x6 |
+| Reactor Gamma | 150,000/s | 7x7 |
+| Reactor Omega | 250,000/s | 8x8 |
 
-Si faltan recursos, la producción cae (sin explosión automática).
+Hasta **40x mas potentes** que el Impact Reactor vanilla.
 
-### Nodos
+---
 
-- **Nodo-R**: 1×1, rango 8, 6 conexiones
-- **Nodo-P**: 2×2, rango 20, 15 conexiones
-- **Nodo-SC**: 2×2, rango 40, 25 conexiones (consume 500/s)
+## Sistema de Gestion
 
-### Gestión
+### Monitores
+- **Monitor Local** — monitorea solo su red conectada en tiempo real
+- **Monitor Global** — escanea todas las redes en 40 tiles y suma produccion/consumo total
+- **Monitor de Baterias** — nivel de carga, alertas y control por bateria
 
-- **Monitor de Energía** — producción/consumo/balance + historial
-- **Controller Root** — ON/OFF y cap por generador (rango 8)
-- **Controller Net** — control de toda la PowerGraph + modo emergencia
-- **Gestor Universal** — toggle y config item/líquido en rango
-- **Liquid Controller** — niveles, alertas y toggle de bloques con líquidos
+### Controladores de Energia
+- **Controlador Root** — control directo de generadores: toggle ON/OFF y cap de produccion %
+- **Controlador Net** — gestor de red completa: cap global, modo emergencia, control por categoria
 
-## Build
+### Controladores de Logistica
+- **Controlador de Items** — cintas, sorters y routers con cambio de item desde el panel
+- **Controlador de Liquidos** — tuberias y tanques con alertas de nivel bajo
+- **Gestor Universal** — controla CUALQUIER bloque configurable en rango
 
-```bash
-./gradlew jar
-# Salida: build/libs/singularity-reactors-modDesktop.jar
-```
+---
 
-Copia el JAR a la carpeta `mods` de Mindustry y reinicia.
+## Nodos de Energia
 
-## Instalación
+| Bloque | Rango | Conexiones |
+|--------|-------|-----------|
+| Nodo-R | 8 tiles | 6 |
+| Nodo-P | 20 tiles | 15 |
+| Nodo-SC | 40 tiles | 25 |
 
-1. Descarga el JAR de [Releases](https://github.com/literal234xzha-cpu/singularity-reactors-mod/releases)
-2. Ponlo en:
-   - Windows: `%APPDATA%/Mindustry/mods/`
-   - Linux: `~/.local/share/Mindustry/mods/`
-   - macOS: `~/Library/Application Support/Mindustry/mods/`
-3. Reinicia Mindustry y activa el mod
+---
 
-**Importante:** no uses JARs viejos (`mindustry-singularity-modDesktop.jar` v1). Usa solo el de releases / `build/libs`.
+## Instalacion
 
-## Autor
+Descarga `singularity-reactors-mod.jar` desde [Releases](https://github.com/literal234xzha-cpu/singularity-reactors-mod/releases/latest) y copialo a tu carpeta de mods.
 
-LOLOCORD
+- **Android**: usar importar mod desde el juego
+- **Windows**: `%APPDATA%\Mindustry\mods\`
+- **Linux**: `~/.local/share/Mindustry/mods/`
+
+---
+
+## Compatibilidad
+
+- Mindustry v160.3+
+- Compatible con Omaloon, Erekir Liquefied y cualquier mod que use la API estandar
+- Java 8+, Android compatible

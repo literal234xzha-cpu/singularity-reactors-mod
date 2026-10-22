@@ -14,6 +14,7 @@ import mindustry.type.Category;
 import mindustry.world.*;
 import mindustry.world.blocks.power.*;
 import mindustry.world.meta.*;
+import singularity.blocks.SingularityReactor;
 
 /**
  * PowerControllerNet - Gestor de red eléctrica completa.
@@ -88,13 +89,25 @@ public class PowerControllerNet extends Block {
             }
 
             if (emergencyMode) {
+                // Apagar primero reactores de menor prioridad (SingularityReactor)
+                // luego consumidores normales
+                for (Building b : graph.consumers) {
+                    if (!(b instanceof PowerGenerator.GeneratorBuild)) continue;
+                    if (!(b.block instanceof SingularityReactor)) continue;
+                    SingularityReactor.SingularityReactorBuild reactor =
+                        (SingularityReactor.SingularityReactorBuild) b;
+                    // Solo apagar los de prioridad baja (1 o 2)
+                    if (reactor.priority <= 2 && reactor.enabled) {
+                        reactor.enabled = false;
+                        if (!emergencyDisabled.contains(reactor)) emergencyDisabled.add(reactor);
+                    }
+                }
+                // Luego consumidores no generadores
                 for (Building b : graph.consumers) {
                     if (b instanceof PowerGenerator.GeneratorBuild) continue;
                     if (b.enabled) {
                         b.enabled = false;
-                        if (!emergencyDisabled.contains(b)) {
-                            emergencyDisabled.add(b);
-                        }
+                        if (!emergencyDisabled.contains(b)) emergencyDisabled.add(b);
                     }
                 }
             }

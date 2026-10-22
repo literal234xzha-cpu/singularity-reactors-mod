@@ -69,7 +69,7 @@ public class SingularityBlocks {
         // ============= REACTORES DE SINGULARIDAD =============
         
         // Reactor Alpha - 50k/s
-        singularityReactorHyper = new ConsumeGenerator("singularity-reactor-hyper") {{
+        singularityReactorHyper = new SingularityReactor("singularity-reactor-hyper") {{
             requirements(Category.power, with(
                 Items.plastanium, 800,
                 Items.thorium, 600,
@@ -108,7 +108,7 @@ public class SingularityBlocks {
         }};
         
         // Reactor Beta - 80k/s
-        singularityReactorImpact = new ConsumeGenerator("singularity-reactor-impact") {{
+        singularityReactorImpact = new SingularityReactor("singularity-reactor-impact") {{
             requirements(Category.power, with(
                 Items.plastanium, 1200,
                 Items.thorium, 900,
@@ -147,7 +147,7 @@ public class SingularityBlocks {
         }};
         
         // Reactor Gamma - 150k/s
-        singularityReactorNeodymium = new ConsumeGenerator("singularity-reactor-neodymium") {{
+        singularityReactorNeodymium = new SingularityReactor("singularity-reactor-neodymium") {{
             requirements(Category.power, with(
                 Items.plastanium, 1800,
                 Items.thorium, 1400,
@@ -187,7 +187,7 @@ public class SingularityBlocks {
         }};
         
         // Reactor Omega - 250k/s
-        singularityReactorImpactor = new ConsumeGenerator("singularity-reactor-impactor") {{
+        singularityReactorImpactor = new SingularityReactor("singularity-reactor-impactor") {{
             requirements(Category.power, with(
                 Items.plastanium, 3000,
                 Items.thorium, 2500,

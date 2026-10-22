@@ -64,6 +64,7 @@ tasks.jar{
 
     from(projectDir){
         include("mod.hjson")
+        include("mod.json")
         include("icon.png")
     }
 

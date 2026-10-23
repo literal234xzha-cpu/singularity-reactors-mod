@@ -1,0 +1,8 @@
+displayName: "Singularity Reactors"
+name: "singularity-reactors"
+author: "LOLOCORD"
+main: "singularity.SingularityMod"
+description: "Reactores Alpha-Omega (50k–250k/s) + Sistema Delta: central nuclear realista con temperatura, turbinas y controles avanzados."
+version: "2.4.0"
+minGameVersion: "160.3"
+java: true

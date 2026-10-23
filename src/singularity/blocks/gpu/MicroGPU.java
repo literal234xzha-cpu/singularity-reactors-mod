@@ -11,8 +11,15 @@ import arc.util.Time;
 import mindustry.type.Category;
 import mindustry.world.blocks.logic.LogicBlock;
 import singularity.blocks.gpu.functions.EnergyCounter;
+import singularity.blocks.gpu.functions.HealthMonitor;
+import singularity.blocks.gpu.functions.ItemAlert;
 import singularity.blocks.gpu.functions.ItemCounter;
+import singularity.blocks.gpu.functions.LiquidLevel;
 import singularity.blocks.gpu.functions.LowPowerAlert;
+import singularity.blocks.gpu.functions.TemperatureDisplay;
+import singularity.blocks.gpu.functions.TimerDisplay;
+import singularity.blocks.gpu.functions.ToggleSwitch;
+import singularity.blocks.gpu.functions.UnitCounter;
 
 /**
  * MicroGPU — Procesador GPU de gama base con funciones precargadas.
@@ -51,12 +58,17 @@ public class MicroGPU extends LogicBlock {
         category = Category.logic;
         buildType = MicroGPUBuild::new;
 
-        // Registrar funciones de tier 0
-        availableFunctions.add(
-            new EnergyCounter(),
-            new LowPowerAlert(),
-            new ItemCounter()
-        );
+        // Registrar funciones de tier 0 (1-10)
+        availableFunctions.add(new EnergyCounter());
+        availableFunctions.add(new LowPowerAlert());
+        availableFunctions.add(new ItemCounter());
+        availableFunctions.add(new LiquidLevel());
+        availableFunctions.add(new UnitCounter());
+        availableFunctions.add(new HealthMonitor());
+        availableFunctions.add(new TimerDisplay());
+        availableFunctions.add(new ToggleSwitch());
+        availableFunctions.add(new ItemAlert());
+        availableFunctions.add(new TemperatureDisplay());
     }
 
     @Override

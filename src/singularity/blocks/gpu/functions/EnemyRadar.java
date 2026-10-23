@@ -5,7 +5,7 @@ import arc.util.Time;
 import mindustry.gen.Building;
 import mindustry.world.blocks.logic.LogicBlock.LogicLink;
 import singularity.blocks.gpu.GPUFunction;
-import singularity.blocks.gpu.MicroGPU;
+import mindustry.world.blocks.logic.LogicBlock.LogicBuild;
 
 /**
  * Función 16: Enemy Radar
@@ -25,7 +25,7 @@ public class EnemyRadar extends GPUFunction {
     }
 
     @Override
-    public void update(MicroGPU.MicroGPUBuild build) {
+    public void update(mindustry.world.blocks.logic.LogicBlock.LogicBuild build) {
         timer += Time.delta;
         if (timer < interval) return;
         timer = 0f;
@@ -50,7 +50,7 @@ public class EnemyRadar extends GPUFunction {
     }
 
     @Override
-    public void buildConfig(Table table, MicroGPU.MicroGPUBuild build) {
+    public void buildConfig(Table table, mindustry.world.blocks.logic.LogicBlock.LogicBuild build) {
         table.defaults().left().padBottom(4f);
         table.add("[cyan]📡 Enemy Radar[]").row();
         table.add("[lightgray]Detecta y muestra enemigos en rango en un display. Indica dirección, distancia y tipo.[]").width(180f).wrap(true).row();

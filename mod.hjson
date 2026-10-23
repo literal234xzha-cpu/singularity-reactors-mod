@@ -3,6 +3,6 @@ name: "singularity-reactors"
 author: "LOLOCORD"
 main: "singularity.SingularityMod"
 description: "Reactores Alpha-Omega + Sistema Delta + GPU (MicroGPU, GPU, HiperGPU) con 35 funciones.
-version: "2.4.1"
+version: "2.4.2"
 minGameVersion: "160.3"
 java: true

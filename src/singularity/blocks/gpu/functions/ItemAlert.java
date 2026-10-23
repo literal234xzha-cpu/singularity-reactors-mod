@@ -8,7 +8,7 @@ import mindustry.gen.Building;
 import mindustry.type.Item;
 import mindustry.world.blocks.logic.LogicBlock.LogicLink;
 import singularity.blocks.gpu.GPUFunction;
-import singularity.blocks.gpu.MicroGPU;
+import mindustry.world.blocks.logic.LogicBlock.LogicBuild;
 
 /**
  * Función 9: Item Alert
@@ -43,7 +43,7 @@ public class ItemAlert extends GPUFunction {
     }
 
     @Override
-    public void update(MicroGPU.MicroGPUBuild build) {
+    public void update(mindustry.world.blocks.logic.LogicBlock.LogicBuild build) {
         timer += Time.delta;
         if (timer < interval) return;
         timer = 0f;
@@ -95,7 +95,7 @@ public class ItemAlert extends GPUFunction {
     }
 
     @Override
-    public void buildConfig(Table table, MicroGPU.MicroGPUBuild build) {
+    public void buildConfig(Table table, mindustry.world.blocks.logic.LogicBlock.LogicBuild build) {
         table.defaults().left().padBottom(4f);
         table.add("[cyan]⚠ Item Alert[]").row();
         table.add("[lightgray]" + description + "[]").row();

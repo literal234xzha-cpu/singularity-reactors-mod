@@ -5,7 +5,7 @@ import arc.util.Time;
 import mindustry.gen.Building;
 import mindustry.world.blocks.logic.LogicBlock.LogicLink;
 import singularity.blocks.gpu.GPUFunction;
-import singularity.blocks.gpu.MicroGPU;
+import mindustry.world.blocks.logic.LogicBlock.LogicBuild;
 
 /**
  * Función 24: Unit Commander
@@ -25,7 +25,7 @@ public class UnitCommander extends GPUFunction {
     }
 
     @Override
-    public void update(MicroGPU.MicroGPUBuild build) {
+    public void update(mindustry.world.blocks.logic.LogicBlock.LogicBuild build) {
         timer += Time.delta;
         if (timer < interval) return;
         timer = 0f;
@@ -50,7 +50,7 @@ public class UnitCommander extends GPUFunction {
     }
 
     @Override
-    public void buildConfig(Table table, MicroGPU.MicroGPUBuild build) {
+    public void buildConfig(Table table, mindustry.world.blocks.logic.LogicBlock.LogicBuild build) {
         table.defaults().left().padBottom(4f);
         table.add("[cyan]⚔ Unit Commander[]").row();
         table.add("[lightgray]Envía órdenes de movimiento o ataque a unidades aliadas en el rango de la GPU.[]").width(180f).wrap(true).row();

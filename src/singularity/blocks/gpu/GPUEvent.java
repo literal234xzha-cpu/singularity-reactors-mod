@@ -70,7 +70,7 @@ public class GPUEvent {
      * Evalúa si el evento debe dispararse.
      * @return true si el evento se disparó en este tick
      */
-    public boolean evaluate(MicroGPU.MicroGPUBuild build) {
+    public boolean evaluate(mindustry.world.blocks.logic.LogicBlock.LogicBuild build) {
         if (!active) return false;
 
         cooldownTimer -= Time.delta;
@@ -106,7 +106,7 @@ public class GPUEvent {
         return fired;
     }
 
-    private boolean checkCondition(MicroGPU.MicroGPUBuild build) {
+    private boolean checkCondition(mindustry.world.blocks.logic.LogicBlock.LogicBuild build) {
         switch (type) {
             case ENEMY_ENTER:
             case ENEMY_EXIT:

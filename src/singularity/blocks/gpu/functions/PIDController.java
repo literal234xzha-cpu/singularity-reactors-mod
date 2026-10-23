@@ -6,7 +6,7 @@ import mindustry.Vars;
 import mindustry.gen.Building;
 import mindustry.world.blocks.logic.LogicBlock.LogicLink;
 import singularity.blocks.gpu.GPUFunction;
-import singularity.blocks.gpu.MicroGPU;
+import mindustry.world.blocks.logic.LogicBlock.LogicBuild;
 
 /**
  * Función 29: PID Controller
@@ -34,7 +34,7 @@ public class PIDController extends GPUFunction {
     }
 
     @Override
-    public void update(MicroGPU.MicroGPUBuild build) {
+    public void update(mindustry.world.blocks.logic.LogicBlock.LogicBuild build) {
         timer += Time.delta;
         if (timer < interval) return;
         timer = 0f;
@@ -95,7 +95,7 @@ public class PIDController extends GPUFunction {
     }
 
     @Override
-    public void buildConfig(Table table, MicroGPU.MicroGPUBuild build) {
+    public void buildConfig(Table table, mindustry.world.blocks.logic.LogicBlock.LogicBuild build) {
         table.defaults().left().padBottom(4f);
         table.add("[cyan]🎛 PID Controller[]").row();
         table.add("[lightgray]Control proporcional-integral-derivativo de temperatura del Delta Reactor.[]").width(180f).wrap(true).row();

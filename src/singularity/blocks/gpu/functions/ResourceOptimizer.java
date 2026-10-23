@@ -6,7 +6,7 @@ import mindustry.Vars;
 import mindustry.gen.Building;
 import mindustry.world.blocks.logic.LogicBlock.LogicLink;
 import singularity.blocks.gpu.GPUFunction;
-import singularity.blocks.gpu.MicroGPU;
+import mindustry.world.blocks.logic.LogicBlock.LogicBuild;
 
 /**
  * Función 31: Resource Optimizer
@@ -29,7 +29,7 @@ public class ResourceOptimizer extends GPUFunction {
     }
 
     @Override
-    public void update(MicroGPU.MicroGPUBuild build) {
+    public void update(mindustry.world.blocks.logic.LogicBlock.LogicBuild build) {
         timer += Time.delta;
         if (timer < interval) return;
         timer = 0f;
@@ -93,7 +93,7 @@ public class ResourceOptimizer extends GPUFunction {
     }
 
     @Override
-    public void buildConfig(Table table, MicroGPU.MicroGPUBuild build) {
+    public void buildConfig(Table table, mindustry.world.blocks.logic.LogicBlock.LogicBuild build) {
         table.defaults().left().padBottom(4f);
         table.add("[cyan]♻ Resource Optimizer[]").row();
         table.add("[lightgray]Balancea producción de items entre fábricas según demanda y almacenamiento.[]").width(180f).wrap(true).row();

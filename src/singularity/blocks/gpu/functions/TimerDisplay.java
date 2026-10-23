@@ -3,7 +3,7 @@ package singularity.blocks.gpu.functions;
 import arc.scene.ui.layout.Table;
 import arc.util.Time;
 import singularity.blocks.gpu.GPUFunction;
-import singularity.blocks.gpu.MicroGPU;
+import mindustry.world.blocks.logic.LogicBlock.LogicBuild;
 
 /**
  * Función 7: Timer Display
@@ -37,7 +37,7 @@ public class TimerDisplay extends GPUFunction {
     }
 
     @Override
-    public void update(MicroGPU.MicroGPUBuild build) {
+    public void update(mindustry.world.blocks.logic.LogicBlock.LogicBuild build) {
         if (running) elapsed += Time.delta / 60f; // convertir ticks a segundos
         timer += Time.delta;
         if (timer < interval) return;
@@ -81,7 +81,7 @@ public class TimerDisplay extends GPUFunction {
     }
 
     @Override
-    public void buildConfig(Table table, MicroGPU.MicroGPUBuild build) {
+    public void buildConfig(Table table, mindustry.world.blocks.logic.LogicBlock.LogicBuild build) {
         table.defaults().left().padBottom(4f);
         table.add("[cyan]⏱ Timer Display[]").row();
         table.add("[lightgray]" + description + "[]").row();

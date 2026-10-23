@@ -28,7 +28,7 @@ public class GPUVecInstruction {
         this.category = category; this.tier = tier;
     }
 
-    public double execute(MicroGPU.MicroGPUBuild build, String[] args) {
+    public double execute(mindustry.world.blocks.logic.LogicBlock.LogicBuild build, String[] args) {
         Seq<Building> targets = linked(build);
         switch (id) {
 
@@ -129,7 +129,7 @@ public class GPUVecInstruction {
         return 0;
     }
 
-    private Seq<Building> linked(MicroGPU.MicroGPUBuild build) {
+    private Seq<Building> linked(mindustry.world.blocks.logic.LogicBlock.LogicBuild build) {
         Seq<Building> r = new Seq<>();
         for (int i = 0; i < build.links.size; i++) {
             LogicLink l = build.links.get(i);
@@ -138,7 +138,7 @@ public class GPUVecInstruction {
         return r;
     }
 
-    private Unit closestEnemy(MicroGPU.MicroGPUBuild build) {
+    private Unit closestEnemy(mindustry.world.blocks.logic.LogicBlock.LogicBuild build) {
         Unit closest = null; float minD = Float.MAX_VALUE;
         for (Unit u : Groups.unit) {
             if (u.team == build.team) continue;

@@ -6,7 +6,7 @@ import mindustry.Vars;
 import mindustry.gen.Building;
 import mindustry.world.blocks.logic.LogicBlock.LogicLink;
 import singularity.blocks.gpu.GPUFunction;
-import singularity.blocks.gpu.MicroGPU;
+import mindustry.world.blocks.logic.LogicBlock.LogicBuild;
 
 /**
  * Función 33: Economy Monitor
@@ -35,7 +35,7 @@ public class EconomyMonitor extends GPUFunction {
     }
 
     @Override
-    public void update(MicroGPU.MicroGPUBuild build) {
+    public void update(mindustry.world.blocks.logic.LogicBlock.LogicBuild build) {
         timer += Time.delta;
         if (timer < interval) return;
         timer = 0f;
@@ -111,7 +111,7 @@ public class EconomyMonitor extends GPUFunction {
     }
 
     @Override
-    public void buildConfig(Table table, MicroGPU.MicroGPUBuild build) {
+    public void buildConfig(Table table, mindustry.world.blocks.logic.LogicBlock.LogicBuild build) {
         table.defaults().left().padBottom(4f);
         table.add("[cyan]📈 Economy Monitor[]").row();
         table.add("[lightgray]Ratio de producción y consumo de recursos por minuto con historial.[]").width(180f).wrap(true).row();

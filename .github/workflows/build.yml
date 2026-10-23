@@ -15,11 +15,11 @@ jobs:
         distribution: 'temurin'
         java-version: 17
     
-    - name: Set up Android SDK
-      uses: android-actions/setup-android@v3
-      with:
-        api-level: 34
-        build-tools: 34.0.0
+    - name: Set up Android build-tools in PATH
+      run: |
+        D8_DIR=$(dirname $(find $ANDROID_HOME/build-tools -name d8 | sort -V | tail -n 1))
+        echo "Found d8 in: $D8_DIR"
+        echo "$D8_DIR" >> $GITHUB_PATH
     
     - name: Build Desktop JAR
       run: |

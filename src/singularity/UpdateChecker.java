@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 public class UpdateChecker {
 
     /** Debe coincidir con mod.hjson → version */
-    public static final String CURRENT_VERSION = "2.2.2";
+    public static final String CURRENT_VERSION = "2.2.3";
 
     private static final String REPO = "literal234xzha-cpu/singularity-reactors-mod";
     private static final String API_URL =

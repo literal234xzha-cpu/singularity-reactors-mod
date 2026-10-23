@@ -396,7 +396,7 @@ public class SingularityBlocks {
 
         // ============= PROCESADORES GPU =============
 
-        microGPU = new MicroGPU("micro-gpu") {{
+        microGPU = new MicroGPU("singularity-micro-gpu") {{
             requirements(Category.logic, with(
                 Items.copper, 60,
                 Items.lead, 40,
@@ -405,10 +405,9 @@ public class SingularityBlocks {
             ));
             size = 1;
             health = 80;
-            // instructionsPerTick ya seteado en clase: 12
         }};
 
-        gpu = new GPU("gpu") {{
+        gpu = new GPU("singularity-gpu") {{
             requirements(Category.logic, with(
                 Items.titanium, 100,
                 Items.silicon, 120,
@@ -418,10 +417,9 @@ public class SingularityBlocks {
             ));
             size = 2;
             health = 320;
-            // instructionsPerTick ya seteado en clase: 50
         }};
 
-        hiperGPU = new HiperGPU("hiper-gpu") {{
+        hiperGPU = new HiperGPU("singularity-hiper-gpu") {{
             requirements(Category.logic, with(
                 Items.surgeAlloy, 200,
                 Items.phaseFabric, 150,
@@ -431,7 +429,6 @@ public class SingularityBlocks {
             ));
             size = 3;
             health = 700;
-            // instructionsPerTick ya seteado en clase: 200
         }};
     }
 }

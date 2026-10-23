@@ -1,6 +1,9 @@
 package singularity.blocks.delta;
 
+import arc.Core;
 import arc.graphics.Color;
+import arc.graphics.g2d.Draw;
+import arc.graphics.g2d.TextureRegion;
 import arc.math.Mathf;
 import arc.scene.ui.layout.Table;
 import arc.util.Strings;
@@ -20,6 +23,7 @@ import mindustry.world.Tile;
 public class DeltaLoadRegulator extends Block {
 
     public int regulatorRange = 30;
+    public TextureRegion topRegion;
 
     public DeltaLoadRegulator(String name) {
         super(name);
@@ -33,6 +37,12 @@ public class DeltaLoadRegulator extends Block {
         category = Category.power;
         health = 600;
         buildType = DeltaLoadRegulatorBuild::new;
+    }
+
+    @Override
+    public void load() {
+        super.load();
+        topRegion = Core.atlas.find(name + "-top");
     }
 
     public class DeltaLoadRegulatorBuild extends Building {
@@ -57,6 +67,14 @@ public class DeltaLoadRegulator extends Block {
                 scanTimer = 0;
                 scanTurbines();
                 if (autoMode) regulate();
+            }
+        }
+
+        @Override
+        public void draw() {
+            Draw.rect(region, x, y);
+            if (topRegion != null && topRegion.found() && enabled) {
+                Draw.rect(topRegion, x, y);
             }
         }
 

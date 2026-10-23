@@ -1,6 +1,9 @@
 package singularity.blocks.delta;
 
+import arc.Core;
 import arc.graphics.Color;
+import arc.graphics.g2d.Draw;
+import arc.graphics.g2d.TextureRegion;
 import arc.math.Mathf;
 import arc.scene.ui.layout.Table;
 import arc.util.Strings;
@@ -27,6 +30,7 @@ public class DeltaCondenser extends Block {
     public float condensRate   = 3f;    // agua producida por tick
     public float coolEff       = 0.92f; // eficiencia del ciclo
     public float waterTemp     = 45f;   // temperatura del agua de salida (Celsius)
+    public TextureRegion liquidRegion;
 
     public DeltaCondenser(String name) {
         super(name);
@@ -40,6 +44,12 @@ public class DeltaCondenser extends Block {
         category = Category.liquid;
         health = 2000;
         buildType = DeltaCondenserBuild::new;
+    }
+
+    @Override
+    public void load() {
+        super.load();
+        liquidRegion = Core.atlas.find(name + "-liquid");
     }
 
     // =========================================================================
@@ -75,6 +85,17 @@ public class DeltaCondenser extends Block {
                 steamIn = 0f;
                 waterOut = 0f;
                 cycleEff = 0f;
+            }
+        }
+
+        @Override
+        public void draw() {
+            Draw.rect(region, x, y);
+            if (liquids != null && liquids.currentAmount() > 0.01f && liquidRegion != null && liquidRegion.found()) {
+                Draw.color(liquids.current().color);
+                Draw.alpha(Mathf.clamp(liquids.currentAmount() / liquidCapacity));
+                Draw.rect(liquidRegion, x, y);
+                Draw.color();
             }
         }
 

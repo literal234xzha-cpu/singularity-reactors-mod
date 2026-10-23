@@ -1,6 +1,9 @@
 package singularity.blocks.delta;
 
+import arc.Core;
 import arc.graphics.Color;
+import arc.graphics.g2d.Draw;
+import arc.graphics.g2d.TextureRegion;
 import arc.math.Mathf;
 import arc.scene.ui.layout.Table;
 import arc.util.Time;
@@ -42,9 +45,9 @@ public class DeltaReactor extends Block {
     public float criticalTemp  = 1000f;  // inicio de meltdown
     public float absoluteMax   = 1200f;  // temperatura maxima absoluta
 
-    public float heatGenRate   = 40f;    // calor generado por tick (por unidad de combustible)
-    public float coolRate      = 2f;     // enfriamiento por unidad de refrigerante/tick
-    public float passiveCool   = 0.5f;   // enfriamiento pasivo por tick
+    public float heatGenRate   = 4.0f;    // calor generado por tick (equilibrio natural)
+    public float coolRate      = 0.3f;    // consumo moderado de refrigerante
+    public float passiveCool   = 0.15f;   // enfriamiento pasivo por tick
     public float heatRiseRate  = 1.5f;   // subida de temperatura por tick sin refrigerante
     public float maxHeatOutput = 5000f;  // calor maximo que puede exportar
 
@@ -52,6 +55,9 @@ public class DeltaReactor extends Block {
     public float maxHealth2    = 1000f;  // vida util interna (no HP)
     public float damageRate    = 0.1f;   // daño por tick sobre maxSafeTemp
     public float meltdownTime  = 60f * 30f; // 30 segundos para meltdown desde criticalTemp
+
+    public TextureRegion rotatorRegion;
+    public TextureRegion topRegion;
 
     public DeltaReactor(String name) {
         super(name);
@@ -66,6 +72,13 @@ public class DeltaReactor extends Block {
         category = Category.power;
         health = 5000;
         buildType = DeltaReactorBuild::new;
+    }
+
+    @Override
+    public void load() {
+        super.load();
+        rotatorRegion = Core.atlas.find(name + "-rotator");
+        topRegion = Core.atlas.find(name + "-top");
     }
 
     @Override
@@ -90,6 +103,8 @@ public class DeltaReactor extends Block {
         public float coolantFlow  = 0f;
         public float heatGenerated = 0f;
 
+        public float coreSpin = 0f;
+
         @Override
         public Building init(Tile tile, Team team, boolean lastConfig, int rotation) {
             super.init(tile, team, lastConfig, rotation);
@@ -101,18 +116,28 @@ public class DeltaReactor extends Block {
         @Override
         public void updateTile() {
             if (scrammed || !enabled) {
-                // Enfriamiento pasivo al estar apagado
-                temperature = Math.max(20f, temperature - passiveCool * 3f * Time.delta);
+                // Enfriamiento pasivo y con refrigerante cuando esta apagado
+                coolantFlow = 0f;
+                if (liquids != null && liquids.currentAmount() > 0.01f) {
+                    Liquid coolant = liquids.current();
+                    float consumed = Math.min(liquids.currentAmount(), 0.2f * Time.delta);
+                    liquids.remove(coolant, consumed);
+                    coolantFlow = consumed * 60f;
+                    temperature = Math.max(20f, temperature - 6f * Time.delta);
+                } else {
+                    temperature = Math.max(20f, temperature - passiveCool * 2f * Time.delta);
+                }
                 heatOutput = 0f;
                 meltTimer = 0f;
+                heatGenerated = 0f;
                 return;
             }
 
-            // Consumir combustible (items) y generar calor
+            // Generacion de calor continuo del combustible
             float fuelEff = shouldConsume() ? 1f : 0f;
             if (fuelEff > 0.01f) {
                 temperature += heatGenRate * fuelEff * Time.delta;
-                heatGenerated = heatGenRate * fuelEff * 60f;
+                heatGenerated = heatGenRate * fuelEff * 60f * 20f;
             } else {
                 heatGenerated = 0f;
             }
@@ -123,19 +148,49 @@ public class DeltaReactor extends Block {
                 Liquid coolant = liquids.current();
                 float amount = liquids.currentAmount();
                 if (amount > 0.01f && (coolant == Liquids.water || coolant == Liquids.cryofluid)) {
-                    float cRate = coolant == Liquids.cryofluid ? coolRate * 2.5f : coolRate;
-                    float consumed = Math.min(amount, cRate * Time.delta);
-                    liquids.remove(coolant, consumed);
-                    temperature -= consumed * (coolant == Liquids.cryofluid ? 80f : 40f);
-                    coolantFlow = consumed * 60f;
+                    // Temperatura objetivo de equilibrio con este refrigerante:
+                    // Agua: equilibrio ideal a 640C (zona optima 600-750C)
+                    // Criofluido: mas frio y ultra-estable a 480C
+                    float targetTemp = (coolant == Liquids.cryofluid) ? 480f : 640f;
+
+                    // Si el nucleo esta por debajo de 100C (punto de ebullicion),
+                    // el refrigerante no absorbe calor excesivo para permitir arranque rapido.
+                    if (temperature > 100f) {
+                        float coolMultiplier = (coolant == Liquids.cryofluid) ? 2.0f : 1.0f;
+                        float coolingEffect;
+
+                        if (temperature <= targetTemp) {
+                            // Subiendo hacia el equilibrio optimo:
+                            // La extraccion termica es menor que la generacion para que el reactor
+                            // logre subir y asentarse en la temperatura operativa ideal.
+                            float ratio = (temperature - 100f) / (targetTemp - 100f);
+                            coolingEffect = heatGenRate * ratio * 0.95f;
+                        } else {
+                            // Sobre la temperatura de equilibrio:
+                            // El refrigerante disipa mas calor del que genera, forzando la estabilizacion
+                            coolingEffect = heatGenRate + (temperature - targetTemp) * 0.05f * coolMultiplier;
+                        }
+
+                        temperature -= coolingEffect * Time.delta;
+
+                        // Consumo continuo de refrigerante proporcional al calor disipado
+                        float useBase = (coolant == Liquids.cryofluid) ? 0.12f : 0.22f;
+                        float useMax = (coolant == Liquids.cryofluid) ? 0.28f : 0.45f;
+                        float flowRate = Mathf.lerp(useBase, useMax, Mathf.clamp((temperature - 100f) / 700f));
+                        float consumed = Math.min(amount, flowRate * Time.delta);
+                        liquids.remove(coolant, consumed);
+                        coolantFlow = consumed * 60f;
+                    }
                 }
             }
 
-            // Enfriamiento pasivo
-            temperature -= passiveCool * Time.delta;
+            // Enfriamiento pasivo ambiental minimo
+            if (temperature > 20f) {
+                temperature -= passiveCool * Time.delta;
+            }
             temperature = Math.max(20f, temperature);
 
-            // Calor exportable a turbinas (proporcional a temperatura)
+            // Calor exportable a turbinas (a partir de minTemp=200C)
             if (temperature >= minTemp) {
                 float ratio = Mathf.clamp((temperature - minTemp) / (optimalTemp - minTemp));
                 heatOutput = ratio * maxHeatOutput * fuelEff;
@@ -162,6 +217,35 @@ public class DeltaReactor extends Block {
 
             // Temperatura maxima absoluta
             temperature = Math.min(temperature, absoluteMax);
+        }
+
+        @Override
+        public void draw() {
+            Draw.rect(region, x, y);
+
+            if (temperature > 50f) {
+                float spinSpeed = Mathf.clamp((temperature - 20f) / 600f) * 1.5f;
+                coreSpin += spinSpeed * Time.delta;
+            }
+
+            if (rotatorRegion != null && rotatorRegion.found()) {
+                Draw.rect(rotatorRegion, x, y, coreSpin);
+            }
+
+            // Brillo termico incandescente del nucleo
+            if (temperature > 200f) {
+                float heatFrac = Mathf.clamp((temperature - 200f) / 800f);
+                Draw.color(Color.valueOf("ff6a00"), Color.valueOf("ff2200"), heatFrac);
+                Draw.alpha(heatFrac * 0.7f);
+                if (rotatorRegion != null && rotatorRegion.found()) {
+                    Draw.rect(rotatorRegion, x, y, -coreSpin * 0.5f);
+                }
+                Draw.color(); // Reset color
+            }
+
+            if (topRegion != null && topRegion.found()) {
+                Draw.rect(topRegion, x, y);
+            }
         }
 
         private void triggerMeltdown() {

@@ -26,16 +26,17 @@ jobs:
         chmod +x ./gradlew
         ./gradlew clean jar
     
-    - name: Convert to DEX
+    - name: Convert to DEX and package universal JAR
       run: |
         d8 --output dex-classes.jar build/libs/singularity-reactors-modDesktop.jar
         mkdir -p final-jar
-        unzip -q dex-classes.jar -d final-jar
-        unzip -q singularity-reactors-mod.jar -d final-jar
+        unzip -q build/libs/singularity-reactors-modDesktop.jar -d final-jar
+        unzip -q -o dex-classes.jar -d final-jar
         cd final-jar
         zip -qr ../singularity-reactors-mod.jar *
         cd ..
         ls -lh singularity-reactors-mod.jar
+        unzip -l singularity-reactors-mod.jar | grep -E "(classes\.dex|mod\.)"
     
     - name: Upload artifact
       uses: actions/upload-artifact@v4

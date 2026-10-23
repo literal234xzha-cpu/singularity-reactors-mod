@@ -1,6 +1,9 @@
 package singularity.blocks.delta;
 
+import arc.Core;
 import arc.graphics.Color;
+import arc.graphics.g2d.Draw;
+import arc.graphics.g2d.TextureRegion;
 import arc.math.Mathf;
 import arc.scene.ui.layout.Table;
 import arc.util.io.Reads;
@@ -18,6 +21,8 @@ import mindustry.world.meta.BlockGroup;
  * Se linkea a un reactor especifico, muestra temperatura y dispara alarma si supera umbral.
  */
 public class TempSensor extends Block {
+
+    public TextureRegion topRegion;
 
     public TempSensor(String name) {
         super(name);
@@ -41,6 +46,12 @@ public class TempSensor extends Block {
         });
     }
 
+    @Override
+    public void load() {
+        super.load();
+        topRegion = Core.atlas.find(name + "-top");
+    }
+
     public class TempSensorBuild extends Building {
 
         public DeltaReactor.DeltaReactorBuild reactor;
@@ -62,6 +73,16 @@ public class TempSensor extends Block {
             }
 
             alertActive = reactor.temperature >= alertThreshold;
+        }
+
+        @Override
+        public void draw() {
+            Draw.rect(region, x, y);
+            if (topRegion != null && topRegion.found()) {
+                float curTemp = reactor != null ? reactor.temperature : 20f;
+                float rot = Mathf.clamp((curTemp - 20f) / 1000f) * 180f;
+                Draw.rect(topRegion, x, y, -rot);
+            }
         }
 
         @Override

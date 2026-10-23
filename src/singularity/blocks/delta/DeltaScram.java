@@ -1,6 +1,9 @@
 package singularity.blocks.delta;
 
+import arc.Core;
 import arc.graphics.Color;
+import arc.graphics.g2d.Draw;
+import arc.graphics.g2d.TextureRegion;
 import arc.scene.ui.layout.Table;
 import arc.util.Time;
 import arc.util.io.Reads;
@@ -21,6 +24,7 @@ public class DeltaScram extends Block {
 
     public int scramRange = 60;
     public float cooldownTime = 120f * 60f; // 120 segundos
+    public TextureRegion topRegion;
 
     public DeltaScram(String name) {
         super(name);
@@ -34,6 +38,12 @@ public class DeltaScram extends Block {
         category = Category.power;
         health = 500;
         buildType = DeltaScramBuild::new;
+    }
+
+    @Override
+    public void load() {
+        super.load();
+        topRegion = Core.atlas.find(name + "-top");
     }
 
     public class DeltaScramBuild extends Building {
@@ -50,6 +60,20 @@ public class DeltaScram extends Block {
         @Override
         public void updateTile() {
             if (cooldown > 0f) cooldown -= Time.delta;
+        }
+
+        @Override
+        public void draw() {
+            Draw.rect(region, x, y);
+            if (topRegion != null && topRegion.found()) {
+                if (cooldown > 0f) {
+                    Draw.color(Color.gray);
+                } else {
+                    Draw.color(Color.white);
+                }
+                Draw.rect(topRegion, x, y);
+                Draw.color();
+            }
         }
 
         private void triggerScram() {

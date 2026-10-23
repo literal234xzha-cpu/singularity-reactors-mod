@@ -1,4 +1,4 @@
-name: Release Mod
+name: Release Mod with DEX
 
 on:
   release:
@@ -6,38 +6,52 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Release tag (e.g. v2.0.4)'
+        description: 'Release tag (e.g. v2.2.4)'
         required: true
-        default: 'v2.0.4'
+        default: 'v2.2.4'
 
 permissions:
   contents: write
 
 jobs:
-  buildJar:
+  buildAndRelease:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: mindustry-singularity-mod
 
     steps:
     - uses: actions/checkout@v4
-    - name: Set up PATH
-      run: echo "${ANDROID_HOME}/build-tools/34.0.0" >> $GITHUB_PATH
+    
     - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
         distribution: 'temurin'
         java-version: 17
-    - name: Build mod jar
+    
+    - name: Set up Android SDK
+      uses: android-actions/setup-android@v3
+      with:
+        api-level: 34
+        build-tools: 34.0.0
+    
+    - name: Build Desktop JAR
       run: |
         chmod +x ./gradlew
-        ./gradlew deploy
-    - name: Upload release artifact
+        ./gradlew clean jar
+    
+    - name: Convert to DEX and package universal JAR
+      run: |
+        d8 --output dex-classes.jar build/libs/singularity-reactors-modDesktop.jar
+        mkdir -p final-jar
+        unzip -q build/libs/singularity-reactors-modDesktop.jar -d final-jar
+        unzip -q -o dex-classes.jar -d final-jar
+        cd final-jar
+        zip -qr ../singularity-reactors-mod.jar *
+        cd ..
+        ls -lh singularity-reactors-mod.jar
+        unzip -l singularity-reactors-mod.jar | grep -E "(classes\.dex|mod\.)"
+    
+    - name: Upload to release
       env:
         GH_TOKEN: ${{ github.token }}
       run: |
         TAG="${{ github.event.release.tag_name || github.event.inputs.tag }}"
-        gh release upload "$TAG" \
-          "build/libs/${{ github.event.repository.name }}.jar" \
-          --clobber
+        gh release upload "$TAG" singularity-reactors-mod.jar --clobber

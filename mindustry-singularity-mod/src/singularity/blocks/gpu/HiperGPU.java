@@ -25,6 +25,7 @@ public class HiperGPU extends GPU {
         range = 8 * 20f;
         health = 700;
         category = Category.logic;
+        buildVisibility = mindustry.world.meta.BuildVisibility.shown;
         buildType = HiperGPUBuild::new;
     }
 

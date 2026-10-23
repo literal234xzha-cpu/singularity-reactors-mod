@@ -56,6 +56,7 @@ public class MicroGPU extends LogicBlock {
         range = 8 * 10f;
         health = 80;
         category = Category.logic;
+        buildVisibility = mindustry.world.meta.BuildVisibility.shown;
         buildType = MicroGPUBuild::new;
 
         registerFunctions();

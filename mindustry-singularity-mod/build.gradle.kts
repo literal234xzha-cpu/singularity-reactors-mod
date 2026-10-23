@@ -51,6 +51,8 @@ java{
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
+
+
 dependencies{
     compileOnly(if(mindustryVersion == "be") "Anuken:MindustryBuilds:latest" else "Anuken:Mindustry:$mindustryVersion")
 }

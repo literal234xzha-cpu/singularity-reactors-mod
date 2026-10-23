@@ -61,7 +61,7 @@ public class PowerControllerRoot extends Block {
 
         private Table configTable;
         private int scanTimer = 0;
-        private static final int SCAN_INTERVAL = 60;
+        private final int SCAN_INTERVAL = 60;
 
         @Override
         public Building init(Tile tile, Team team, boolean lastConfig, int rotation) {

@@ -35,6 +35,7 @@ public class GPU extends MicroGPU {
         range = 8 * 14f;
         health = 320;
         category = Category.logic;
+        buildVisibility = mindustry.world.meta.BuildVisibility.shown;
         buildType = GPUBuild::new;
     }
 
@@ -159,13 +160,14 @@ public class GPU extends MicroGPU {
             table.row();
 
             GPUVecInstruction.VecCategory[] cats = GPUVecInstruction.VecCategory.values();
+            final mindustry.world.blocks.logic.LogicBlock.LogicBuild self = this;
             for (GPUVecInstruction.VecCategory cat : cats) {
                 table.add("[yellow]" + cat.name() + "[]").row();
-                for (GPUVecInstruction vec : GPUVecInstruction.ALL) {
+                for (GPUVecInstruction vec : GPUVecInstruction.getAll()) {
                     if (vec.category != cat || vec.tier > 1) continue;
                     table.table(row -> {
                         row.add("[white]" + vec.name + "[]").width(100f).left().padRight(4f);
-                        row.button("[green]▶[]", () -> vec.execute(this, new String[0]))
+                        row.button("[green]▶[]", () -> vec.execute(self, new String[0]))
                            .size(28f, 24f);
                     }).row();
                     table.add("[lightgray]" + vec.description + "[]")
@@ -202,7 +204,7 @@ public class GPU extends MicroGPU {
 
             // Agregar evento
             table.add("[white]+ Agregar evento:[]").row();
-            for (GPUEvent template : GPUEvent.TEMPLATES) {
+            for (GPUEvent template : GPUEvent.getTemplates()) {
                 if (template.tier > 1) continue;
                 final GPUEvent tmpl = template;
                 table.button(tmpl.name, () -> {
@@ -219,7 +221,7 @@ public class GPU extends MicroGPU {
         private boolean showWiki  = false;
 
         private GPUVecInstruction findVec(String id) {
-            for (GPUVecInstruction v : GPUVecInstruction.ALL)
+            for (GPUVecInstruction v : GPUVecInstruction.getAll())
                 if (v.id.equals(id)) return v;
             return null;
         }

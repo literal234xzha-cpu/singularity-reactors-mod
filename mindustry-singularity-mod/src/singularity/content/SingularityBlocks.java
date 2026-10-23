@@ -287,6 +287,8 @@ public class SingularityBlocks {
             consumePower(3f);
         }};
 
+        // TODO: LiquidController tiene problemas con DEX - arreglar inner class
+        /*
         liquidController = new LiquidController("liquid-controller") {{
             requirements(Category.liquid, with(
                 Items.silicon, 25,
@@ -300,6 +302,7 @@ public class SingularityBlocks {
             lowLevelThreshold = 0.20f;
             consumePower(1.5f);
         }};
+        */
 
         // ============= SISTEMA DELTA (CENTRAL NUCLEAR) =============
 

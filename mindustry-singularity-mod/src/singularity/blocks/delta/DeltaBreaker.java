@@ -1,6 +1,9 @@
 package singularity.blocks.delta;
 
+import arc.Core;
 import arc.graphics.Color;
+import arc.graphics.g2d.Draw;
+import arc.graphics.g2d.TextureRegion;
 import arc.math.Mathf;
 import arc.scene.ui.layout.Table;
 import arc.util.Strings;
@@ -20,6 +23,7 @@ import mindustry.world.Tile;
 public class DeltaBreaker extends Block {
 
     public float defaultThreshold = 50000f;
+    public TextureRegion topRegion;
 
     public DeltaBreaker(String name) {
         super(name);
@@ -36,6 +40,12 @@ public class DeltaBreaker extends Block {
         config(Float.class, (DeltaBreakerBuild b, Float val) -> {
             b.threshold = Mathf.clamp(val, 1000f, 500000f);
         });
+    }
+
+    @Override
+    public void load() {
+        super.load();
+        topRegion = Core.atlas.find(name + "-top");
     }
 
     public class DeltaBreakerBuild extends Building {
@@ -71,6 +81,16 @@ public class DeltaBreaker extends Block {
 
             if (tripped && autoReset && cons < threshold * 0.7f) {
                 tripped = false;
+            }
+        }
+
+        @Override
+        public void draw() {
+            Draw.rect(region, x, y);
+            if (topRegion != null && topRegion.found()) {
+                Draw.color(tripped ? Color.red : Color.green);
+                Draw.rect(topRegion, x, y);
+                Draw.color();
             }
         }
 

@@ -1,6 +1,9 @@
 package singularity.blocks.delta;
 
+import arc.Core;
 import arc.graphics.Color;
+import arc.graphics.g2d.Draw;
+import arc.graphics.g2d.TextureRegion;
 import arc.scene.ui.layout.Table;
 import arc.struct.Seq;
 import arc.util.Strings;
@@ -24,6 +27,7 @@ import mindustry.world.blocks.power.PowerGraph;
 public class DeltaControlPanel extends Block {
 
     public int panelRange = 50;
+    public TextureRegion topRegion;
 
     public DeltaControlPanel(String name) {
         super(name);
@@ -37,6 +41,12 @@ public class DeltaControlPanel extends Block {
         category = Category.power;
         health = 800;
         buildType = DeltaControlPanelBuild::new;
+    }
+
+    @Override
+    public void load() {
+        super.load();
+        topRegion = Core.atlas.find(name + "-top");
     }
 
     public class DeltaControlPanelBuild extends Building {
@@ -58,6 +68,14 @@ public class DeltaControlPanel extends Block {
         public void updateTile() {
             scanTimer++;
             if (scanTimer >= 60) { scanTimer = 0; scan(); }
+        }
+
+        @Override
+        public void draw() {
+            Draw.rect(region, x, y);
+            if (topRegion != null && topRegion.found() && enabled) {
+                Draw.rect(topRegion, x, y);
+            }
         }
 
         private void scan() {

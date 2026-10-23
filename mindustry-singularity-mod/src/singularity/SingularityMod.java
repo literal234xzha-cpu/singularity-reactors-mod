@@ -7,7 +7,7 @@ import singularity.content.*;
 public class SingularityMod extends Mod {
 
     public SingularityMod() {
-        Log.info("[Singularity] Singularity Reactors v" + UpdateChecker.CURRENT_VERSION + " loaded");
+        Log.info("[Singularity] Singularity Reactors v2.1.0 loaded");
     }
 
     @Override
@@ -19,6 +19,8 @@ public class SingularityMod extends Mod {
 
     @Override
     public void init() {
-        UpdateChecker.checkAsync();
+        // UpdateChecker deshabilitado temporalmente para debug Android
+        // UpdateChecker.checkAsync();
+        Log.info("[Singularity] Mod inicializado correctamente");
     }
 }

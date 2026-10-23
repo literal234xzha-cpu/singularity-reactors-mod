@@ -1,6 +1,9 @@
 package singularity.blocks.delta;
 
+import arc.Core;
 import arc.graphics.Color;
+import arc.graphics.g2d.Draw;
+import arc.graphics.g2d.TextureRegion;
 import arc.math.Mathf;
 import arc.scene.ui.layout.Table;
 import arc.util.Strings;
@@ -32,6 +35,9 @@ public class DeltaTurbine extends PowerGenerator {
     public float wearRate    = 0.002f; // desgaste por tick a max RPM
     public float maxPowerOut = 60000f; // produccion maxima en /s
 
+    public TextureRegion rotatorRegion;
+    public TextureRegion topRegion;
+
     public DeltaTurbine(String name) {
         super(name);
         size = 3;
@@ -47,6 +53,13 @@ public class DeltaTurbine extends PowerGenerator {
         buildType = DeltaTurbineBuild::new;
     }
 
+    @Override
+    public void load() {
+        super.load();
+        rotatorRegion = Core.atlas.find(name + "-rotator");
+        topRegion = Core.atlas.find(name + "-top");
+    }
+
     // =========================================================================
     // BUILD
     // =========================================================================
@@ -57,6 +70,7 @@ public class DeltaTurbine extends PowerGenerator {
         public float wear         = 1f;    // 1.0 = nuevo, 0.0 = requiere mantenimiento
         public float heatReceived = 0f;
         public float targetRPM    = 0f;
+        public float spinAngle    = 0f;
 
         private int scanTimer = 0;
         private DeltaReactor.DeltaReactorBuild linkedReactor = null;
@@ -98,6 +112,20 @@ public class DeltaTurbine extends PowerGenerator {
             if (rpm > maxRPM * 0.5f) {
                 wear -= wearRate * (rpm / maxRPM) * Time.delta;
                 wear = Math.max(0f, wear);
+            }
+
+            // Rotacion visual de alabes de la turbina
+            spinAngle += (rpm / 60f) * 6f * Time.delta;
+        }
+
+        @Override
+        public void draw() {
+            Draw.rect(region, x, y);
+            if (rotatorRegion != null && rotatorRegion.found()) {
+                Draw.rect(rotatorRegion, x, y, spinAngle);
+            }
+            if (topRegion != null && topRegion.found()) {
+                Draw.rect(topRegion, x, y);
             }
         }
 

@@ -8,6 +8,7 @@ import mindustry.world.blocks.power.*;
 import mindustry.world.draw.*;
 import singularity.blocks.*;
 import singularity.blocks.delta.*;
+import singularity.blocks.gpu.*;
 
 import static mindustry.type.ItemStack.*;
 
@@ -30,6 +31,9 @@ public class SingularityBlocks {
     // Sistema Delta (central nuclear)
     public static Block deltaReactor, deltaTurbine, deltaCondenser, deltaControlPanel;
     public static Block deltaLoadRegulator, deltaBreaker, deltaScram, tempSensor;
+
+    // Procesadores GPU (micro → hiper)
+    public static Block microGPU, gpu, hiperGPU;
     
     public static void load() {
         
@@ -388,6 +392,46 @@ public class SingularityBlocks {
             ));
             size = 1;
             health = 100;
+        }};
+
+        // ============= PROCESADORES GPU =============
+
+        microGPU = new MicroGPU("micro-gpu") {{
+            requirements(Category.logic, with(
+                Items.copper, 60,
+                Items.lead, 40,
+                Items.silicon, 30,
+                Items.graphite, 20
+            ));
+            size = 1;
+            health = 80;
+            // instructionsPerTick ya seteado en clase: 12
+        }};
+
+        gpu = new GPU("gpu") {{
+            requirements(Category.logic, with(
+                Items.titanium, 100,
+                Items.silicon, 120,
+                Items.surgeAlloy, 50,
+                Items.graphite, 60,
+                Items.phaseFabric, 30
+            ));
+            size = 2;
+            health = 320;
+            // instructionsPerTick ya seteado en clase: 50
+        }};
+
+        hiperGPU = new HiperGPU("hiper-gpu") {{
+            requirements(Category.logic, with(
+                Items.surgeAlloy, 200,
+                Items.phaseFabric, 150,
+                Items.silicon, 300,
+                Items.thorium, 100,
+                Items.titanium, 200
+            ));
+            size = 3;
+            health = 700;
+            // instructionsPerTick ya seteado en clase: 200
         }};
     }
 }

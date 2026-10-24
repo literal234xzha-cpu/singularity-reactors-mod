@@ -1,14 +1,17 @@
 name: Release Mod
 
 on:
+  push:
+    tags:
+      - 'v*'
   release:
     types: [published]
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Release tag (e.g. v2.0.4)'
+        description: 'Release tag (e.g. v2.4.7)'
         required: true
-        default: 'v2.0.4'
+        default: 'v2.4.7'
 
 permissions:
   contents: write
@@ -22,22 +25,53 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Set up PATH
-      run: echo "${ANDROID_HOME}/build-tools/34.0.0" >> $GITHUB_PATH
+
     - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
         distribution: 'temurin'
-        java-version: 17
-    - name: Build mod jar
+        java-version: '17'
+
+    - name: Set up Android SDK build-tools
+      uses: android-actions/setup-android@v3
+
+    - name: Install build-tools 35.0.0
+      run: sdkmanager "build-tools;35.0.0" "platforms;android-35"
+
+    - name: Add d8 to PATH
+      run: echo "$ANDROID_HOME/build-tools/35.0.0" >> $GITHUB_PATH
+
+    - name: Build mod jar (Desktop + Android)
       run: |
         chmod +x ./gradlew
         ./gradlew deploy
-    - name: Upload release artifact
-      env:
-        GH_TOKEN: ${{ github.token }}
+
+    - name: Get tag name
+      id: get_tag
       run: |
-        TAG="${{ github.event.release.tag_name || github.event.inputs.tag }}"
+        if [[ "${{ github.event_name }}" == "push" ]]; then
+          echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+        elif [[ "${{ github.event_name }}" == "release" ]]; then
+          echo "tag=${{ github.event.release.tag_name }}" >> $GITHUB_OUTPUT
+        else
+          echo "tag=${{ github.event.inputs.tag }}" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Create release if not exists
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        TAG="${{ steps.get_tag.outputs.tag }}"
+        gh release view "$TAG" || \
+        gh release create "$TAG" \
+          --title "Singularity Reactors $TAG" \
+          --notes "Release automático del mod Singularity Reactors $TAG"
+
+    - name: Upload JAR to release
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        TAG="${{ steps.get_tag.outputs.tag }}"
         gh release upload "$TAG" \
-          "build/libs/${{ github.event.repository.name }}.jar" \
+          "build/libs/singularity-reactors-mod.jar" \
           --clobber
